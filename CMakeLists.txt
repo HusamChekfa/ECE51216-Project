@@ -10,4 +10,8 @@ add_executable(ECE51216_Project
     Clause.h
     main.cpp
         Parser.h
-        Parser.cpp)
+        Parser.cpp
+        DPLL.h
+        DPLL.cpp
+        Heuristics.h
+        Heuristics.cpp)
