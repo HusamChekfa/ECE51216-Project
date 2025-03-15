@@ -11,14 +11,9 @@
 
 using namespace std;
 
-struct Clause {
-    vector<int> literals;
-    unsigned int unassigned = 0; // count of unassigned variables
-};
-
-int Parse(const std::string &filename) {
+int Parse(const std::string &filename, std::vector<Clause> & clauses) {
     // Open the CNF DIMACS file
-    ifstream inputFile("C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/uf20-01.cnf");
+    ifstream inputFile(filename);
 
     if (!inputFile) {
         cerr << "Error opening file." << endl;
@@ -28,7 +23,7 @@ int Parse(const std::string &filename) {
     string line;
     int numVariables = 0;
     int numClauses = 0;
-    vector<Clause> clauses;
+    //vector<Clause> clauses;
 
     while (getline(inputFile, line)) {
         // Remove leading/trailing whitespace

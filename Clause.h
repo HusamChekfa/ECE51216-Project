@@ -1,17 +1,12 @@
-//
-// Created by Husam Study on 3/14/2025.
-//
-
+// Clause.h
 #ifndef CLAUSE_H
 #define CLAUSE_H
 
+#include <vector>
 
-
-class Clause {
-    Clause();
-    ~Clause();
+struct Clause {
+    std::vector<int> literals;
+    unsigned int unassigned = 0; // count of unassigned variables
 };
 
-
-
-#endif //CLAUSE_H
+#endif // CLAUSE_H
