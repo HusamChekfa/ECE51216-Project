@@ -24,6 +24,8 @@ int main() {
     int b = mapParse(fileName, map_clauses);
     cout << b;
 
+    map_clauses.at(0).at(0).literals.s
+
 
 
     return 0;
