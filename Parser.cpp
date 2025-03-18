@@ -11,7 +11,7 @@
 
 using namespace std;
 
-int Parse(const std::string &filename, std::vector<Clause> & clauses) {
+int Parse(const string &filename, vector<Clause> & clauses) {
     // Open the CNF DIMACS file
     ifstream inputFile(filename);
 
@@ -79,7 +79,7 @@ int Parse(const std::string &filename, std::vector<Clause> & clauses) {
 }
 
 
-int mapParse(const std::string & filename, std::unordered_map<unsigned int, std::vector<Clause>> & clauses) {
+int mapParse(const string & filename, unordered_map<unsigned, vector<Clause>> & clauses) {
     // Open the CNF DIMACS file
     ifstream inputFile(filename);
 
@@ -157,7 +157,7 @@ int mapParse(const std::string & filename, std::unordered_map<unsigned int, std:
     return 0;
 }
 
-int addClauseToMap(std::unordered_map<unsigned int, std::vector<Clause>> & clauses, const Clause& newClause) {
+int addClauseToMap(unordered_map<unsigned, vector<Clause>> & clauses, const Clause& newClause) {
     size_t size = newClause.literals.size();
 
     if (clauses.find(size) == clauses.end()) {
@@ -172,7 +172,7 @@ int addClauseToMap(std::unordered_map<unsigned int, std::vector<Clause>> & claus
 
 
 /*
-int Parse(const std::string &filename) {
+int Parse(const string &filename) {
 
     std::ifstream file(filename);
 

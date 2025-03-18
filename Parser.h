@@ -10,10 +10,10 @@
 #include "Clause.h"
 #include <unordered_map>
 
-int Parse(const std::string & filename, std::vector<Clause> & clauses);
+int Parse(const string & filename, vector<Clause> & clauses);
 
-int mapParse(const std::string & filename, std::unordered_map<unsigned int, std::vector<Clause>> & clauses);
+int mapParse(const string & filename, unordered_map<unsigned, vector<Clause>> & clauses);
 
-int addClauseToMap(std::unordered_map<unsigned int, std::vector<Clause>> & clauses, const Clause& newClause);
+int addClauseToMap(unordered_map<unsigned, vector<Clause>> & clauses, const Clause& newClause);
 
 #endif //PARSER_H

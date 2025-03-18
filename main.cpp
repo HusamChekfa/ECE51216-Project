@@ -10,8 +10,9 @@
 #include <string>
 #include "Parser.h"
 #include <unordered_map>
+#include "Heuristics.h"
 
-using namespace std;
+
 
 int main() {
     vector<Clause> clauses;

@@ -11,6 +11,64 @@
 #include <algorithm>
 
 
+
+/************************************
+ *
+ *
+ *               DPLL
+ *
+ *
+ ***********************************/
+
+// this is the DPLL function. it is called by main. it is recursive.
+/*
+ * --- INPUTS ---
+ * map: the current map of clauses, pass by value
+ * solution: the current set of solutions; a vector of size(# of variables in CNF);
+ *           -1 = complemented
+ *           +1 = un-complemented
+ *           0 = un-assigned
+ * max = largest sized clause in original map
+ * curr_max = current largest sized clause in current map
+ * done = might not be used at all, just there for now
+ * sat = satisfiable - also might not be used
+ * num_clauses = current # of clauses in the map; at 0 = fully satisfied
+ */
+int DPLL(unordered_map<unsigned, vector<Clause>> map, vector<int> & solution, const unsigned & max, int curr_max, bool & done, bool sat, unsigned num_clauses);
+
+
+
+/************************************
+ *
+ *
+ *            UPDATE MAP
+ *
+ *
+ ***********************************/
+
+// t hinking if I want to have ea specical version where I give it a specific literal to search for. maybe better.1
+int update_map(unordered_map<unsigned, vector<Clause>> map, vector<int> & solution);
+
+
+
+/************************************
+ *
+ *
+ *          UPDATE SOLUTION
+ *
+ *
+ ***********************************/
+
+// if this clean_solution is called, the CNF is SAT!
+// this function looks for any unassigned variables and sets them to their complement.
+// (whether var a gets set to a or a' doesn't affect the solution)
+//
+// Remember: 0 = unassigned, 1 = assigned to un-complemented, -1 = assigned to complement
+// so  just find all 0s in the vector, set them to 1
+void clean_solution(vector<int> & solution);
+
+
+
 /************************************
  *
  *
@@ -40,7 +98,7 @@
  *   0 = successful. But nothing was done (no unit clauses found).
  *   1+ = successful. No opposite units found. Handled unit clauses. There was 1+ unit clause.
  */
-int unit(std::unordered_map<unsigned int, std::vector<Clause>> map_clauses);
+int unit(unordered_map<unsigned, vector<Clause>> map_clauses);
 
 
 // duplicate handler
@@ -56,7 +114,7 @@ int unit(std::unordered_map<unsigned int, std::vector<Clause>> map_clauses);
  *     0 = successful. But no duplicates found.
  *     1+ = successful. No duplicates found. No opposites found. Removed duplicates. There were 1+ duplicates.
  */
-int unit_handle_duplicates(std::unordered_map<unsigned int, std::vector<Clause>> map_clauses);
+int unit_handle_duplicates(unordered_map<unsigned, vector<Clause>> map_clauses);
 
 
 // prune non-unit clauses
@@ -73,7 +131,7 @@ int unit_handle_duplicates(std::unordered_map<unsigned int, std::vector<Clause>>
  *     0 = successful. No literals were found.
  *     1+ = idk, awkward since there are = and opposite literals that could be removed. don't need for now.
  */
-int unit_prune_nonunit_clauses(std::unordered_map<unsigned int, std::vector<Clause>> map_clauses, int literal, size_t clause_size);
+int unit_prune_nonunit_clauses(unordered_map<unsigned, vector<Clause>> map_clauses, int literal, size_t clause_size);
 
 
 // prune non-unit clauses
@@ -90,7 +148,7 @@ int unit_prune_nonunit_clauses(std::unordered_map<unsigned int, std::vector<Clau
  *     0 = successful. No literals were found.
  *     1+ = idk, awkward since there are = and opposite literals that could be removed. don't need for now.
  */
-int unit_prune_nonunit_clauses2(std::unordered_map<unsigned int, std::vector<Clause>> map_clauses, int literal, size_t clause_size);
+int unit_prune_nonunit_clauses2(unordered_map<unsigned, vector<Clause>> map_clauses, int literal, size_t clause_size);
 
 
 
@@ -103,7 +161,13 @@ int unit_prune_nonunit_clauses2(std::unordered_map<unsigned int, std::vector<Cla
  *      0 = successful. No literals were found.
  *      1+ = successful. No duplicates found. No opposites found. Removed duplicates. There were 1+ duplicates.
  */
-int unit_prune_handle_duplicates(std::unordered_map<unsigned int, std::vector<Clause>> map_clauses, int literal);
+int unit_prune_handle_duplicates(unordered_map<unsigned, vector<Clause>> map_clauses, int literal);
+
+
+
+
+
+int unit_add_solution(unordered_map<unsigned, vector<Clause>> map, vector<int> & solution, const int & curr_max);
 
 /************************************
  *
