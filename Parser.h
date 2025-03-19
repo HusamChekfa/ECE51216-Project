@@ -8,12 +8,9 @@
 #include <string>
 #include <vector>
 #include "Clause.h"
-#include <unordered_map>
 
 int Parse(const string & filename, vector<Clause> & clauses);
 
-int mapParse(const string & filename, unordered_map<unsigned, vector<Clause>> & clauses);
 
-int addClauseToMap(unordered_map<unsigned, vector<Clause>> & clauses, const Clause& newClause);
 
 #endif //PARSER_H

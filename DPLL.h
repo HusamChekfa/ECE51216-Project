@@ -7,6 +7,4 @@
 
 #include "Heuristics.h"
 
-int DPLL(std::unordered_map<unsigned int, std::vector<Clause>> map_clauses);
-
 #endif //DPLL_H

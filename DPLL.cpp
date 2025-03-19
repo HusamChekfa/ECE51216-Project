@@ -4,8 +4,3 @@
 
 #include "DPLL.h"
 
-int DPLL(std::vector<Clause> & clauses) {
-
-
-    return 0;
-}
