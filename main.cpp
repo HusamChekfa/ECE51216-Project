@@ -13,14 +13,39 @@
 
 
 
+
 int main() {
     vector<Clause> clauses;
+    vector<int> solution;
+    vector<vector<unsigned>> uncomplemented;
+    vector<vector<unsigned>> complemented;
+    bool satisfied = false;
     string fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/uf20-01.cnf";
     cout << "Current working directory: " << filesystem::current_path() << endl;
-    int a = Parse(fileName, clauses);
+    int a = Parse(fileName, clauses, uncomplemented, complemented);
     cout << a << endl;
     cout << g_Unit_count << endl;
     cout << g_Clause_Count << endl;
+
+    int b = DPLL(clauses, solution, uncomplemented, complemented, satisfied);
+
+
+
+
+    // STDOUT?
+    if (b == 0) {
+        // Satsified
+        // call clean_solution
+        cout << "RESULT:SAT" << endl;
+        // run_sat() - this prints output in proper format
+
+    }
+    else {
+        // Unsatisfied
+        cout << "RESULT:UNSAT" << endl;
+    }
+
+
 
 
 
