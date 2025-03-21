@@ -15,17 +15,20 @@
 
 
 int main() {
+    size_t numVars = 0;
     vector<Clause> clauses;
-    vector<int> solution;
+    //vector<int> solution;
     vector<vector<unsigned>> uncomplemented;
     vector<vector<unsigned>> complemented;
     bool satisfied = false;
     string fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/uf20-01.cnf";
     cout << "Current working directory: " << filesystem::current_path() << endl;
-    int a = Parse(fileName, clauses, uncomplemented, complemented);
+    int a = Parse(fileName, clauses, uncomplemented, complemented, numVars);
     cout << a << endl;
     cout << g_Unit_count << endl;
     cout << g_Clause_Count << endl;
+
+    vector<int> solution(numVars, 0);
 
     int b = DPLL(clauses, solution, uncomplemented, complemented, satisfied);
 

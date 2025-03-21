@@ -13,7 +13,7 @@ using namespace std;
 
 
 
-int Parse(const string &filename, vector<Clause> & clauses, vector<vector<unsigned>> & uncomp, vector<vector<unsigned>> & comp) {
+int Parse(const string &filename, vector<Clause> & clauses, vector<vector<unsigned>> & uncomp, vector<vector<unsigned>> & comp, size_t & numVars) {
     // Open the CNF DIMACS file
     ifstream inputFile(filename);
 
@@ -103,6 +103,8 @@ int Parse(const string &filename, vector<Clause> & clauses, vector<vector<unsign
         cout << "ERROR: vector Complement size - 1 != numVariables." << endl;
         return -3;
     }
+
+    numVars = numVariables;
 
 
     return 0;
