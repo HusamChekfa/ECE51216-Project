@@ -13,7 +13,7 @@ using namespace std;
 
 
 
-int Parse(const string &filename, vector<Clause> & clauses, vector<vector<unsigned>> & uncomp, vector<vector<unsigned>> & comp, size_t & numVars) {
+int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
     // Open the CNF DIMACS file
     ifstream inputFile(filename);
 
@@ -26,9 +26,11 @@ int Parse(const string &filename, vector<Clause> & clauses, vector<vector<unsign
     int numVariables = 0;
     int numClauses = 0;
     int clauseSize = 0;
+    int i = 1;
     //vector<Clause> clauses;
     //int completed = 0; // PARSER TESTING VARIABLE; FIXED LAST 2 % AND 0 LINES IN .TXT PARSE
     while (getline(inputFile, line)) {
+        clauseSize = 0;
         // if (completed == 91) {
         //     completed = 100;
         // }
@@ -46,6 +48,7 @@ int Parse(const string &filename, vector<Clause> & clauses, vector<vector<unsign
             stringstream ss(line);
             string temp;
             ss >> temp >> temp >> numVariables >> numClauses;
+            //clauses = vector<Clause>(numVariables + 1);
         }
         // Process clauses (lines with integers followed by 0)
         else {
@@ -63,12 +66,14 @@ int Parse(const string &filename, vector<Clause> & clauses, vector<vector<unsign
                     clause.literals[literal] = 1;
                 }
                 else {
-                    clause.literals[literal] = -1;
+                    clause.literals[-literal] = -1;
                 }
                 //clause.assigned_literals.push_back(false);
                 ++clause.unassigned;
                 ++clauseSize;
             }
+            //clauses[i] = clause;
+            ++i;
             clauses.push_back(clause);
             ++g_Clause_Count;
             if (clauseSize == 1) {
@@ -84,27 +89,59 @@ int Parse(const string &filename, vector<Clause> & clauses, vector<vector<unsign
     cout << "Number of Variables: " << numVariables << endl;
     cout << "Number of Clauses: " << numClauses << endl;
     cout << "Clauses:" << endl;
-    for (const auto& clause : clauses) {
-        for (int literal : clause.literals) {
-            cout << literal << " ";
+    for (int k = 1; k < clauses.size(); ++k) { // const auto& clause : clauses
+        for (int j = 1; j < numVariables + 1; ++j) {
+            if (clauses[k].literals[j] == 1) {
+                cout << j << ' ';
+            }
+            else if (clauses[k].literals[j] == -1) {
+                cout << -j << ' ';
+            }
+            //cout << clauses[k].literals[j];
         }
-        cout << "0" << endl;
+        // for (int literal : clause.literals) {
+        //     cout << literal << " ";
+        // }
+        //cout << "0" << endl;
+        cout << endl;
     }
 
-    if (clauses.size() != numVariables) {
+    if (clauses.size() != numClauses + 1) {
         cout << "ERROR: vector Clauses size != numVariables." << endl;
         return -1;
     }
-    if (uncomp.size() - 1 != numVariables) {
-        cout << "ERROR: vector Uncomplement size - 1 != numVariables." << endl;
-        return -2;
-    }
-    if (comp.size() - 1 != numVariables) {
-        cout << "ERROR: vector Complement size - 1 != numVariables." << endl;
-        return -3;
-    }
+    // if (uncomp.size() - 1 != numVariables) {
+    //     cout << "ERROR: vector Uncomplement size - 1 != numVariables." << endl;
+    //     return -2;
+    // }
+    // if (comp.size() - 1 != numVariables) {
+    //     cout << "ERROR: vector Complement size - 1 != numVariables." << endl;
+    //     return -3;
+    // }
 
     numVars = numVariables;
+
+
+    return 0;
+}
+
+int Parse_uncomp(const vector<Clause> & clauses, vector<vector<unsigned>> & uncomp, vector<vector<unsigned>> & comp) {
+    for (int clause_num = 1; clause_num < clauses.size(); ++clause_num) { // const auto& clause : clauses
+        for (int lit_num = 1; lit_num < clauses[1].literals.size(); ++lit_num) {
+            if (clauses[clause_num].literals[lit_num] == 1) {
+                uncomp[lit_num].push_back(clause_num);
+            }
+            else if (clauses[clause_num].literals[lit_num] == -1) {
+                comp[lit_num].push_back(clause_num);
+            }
+        }
+        // for (int literal : clause.literals) {
+        //     cout << literal << " ";
+        // }
+        //cout << "0" << endl;
+        //cout << endl;
+    }
+
 
 
     return 0;

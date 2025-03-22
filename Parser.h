@@ -9,7 +9,9 @@
 #include <vector>
 #include "Clause.h"
 
-int Parse(const string & filename, vector<Clause> & clauses, vector<vector<unsigned>> & uncomp, vector<vector<unsigned>> & comp, size_t & numVars);
+int Parse(const string & filename, vector<Clause> & clauses, size_t & numVars);
+
+int Parse_uncomp(const vector<Clause> & clauses, vector<vector<unsigned>> & uncomp, vector<vector<unsigned>> & comp);
 
 
 
