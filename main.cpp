@@ -30,14 +30,18 @@ void print_solution(const vector<int> & sol) {
 
 int main() {
     size_t numVars = 0;
-    vector<Clause> clauses(1);
+    //vector<Clause> clauses(1);
+    vector<Clause> clauses;
     //vector<int> solution;
 
     bool satisfied = false;
     string fileName = "";
-    //string fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/uf20-01.cnf";
+    fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/uf20-01.cnf";
 
-    fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/b.cnf";
+    //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/b.cnf";
+    //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/quinn.cnf";
+    //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/ok.cnf";
+    fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/global.cnf";
 
     cout << "Current working directory: " << filesystem::current_path() << endl;
     int a = Parse(fileName, clauses, numVars);

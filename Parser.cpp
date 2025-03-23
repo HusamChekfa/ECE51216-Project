@@ -85,6 +85,7 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
 
     inputFile.close();
 
+    /*
     // Output parsed clauses (for debugging)
     cout << "Number of Variables: " << numVariables << endl;
     cout << "Number of Clauses: " << numClauses << endl;
@@ -105,8 +106,9 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
         //cout << "0" << endl;
         cout << endl;
     }
+    */
 
-    if (clauses.size() != numClauses + 1) {
+    if (clauses.size() != numClauses) {// + 1) {
         cout << "ERROR: vector Clauses size != numVariables." << endl;
         return -1;
     }
@@ -126,8 +128,8 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
 }
 
 int Parse_uncomp(const vector<Clause> & clauses, vector<vector<unsigned>> & uncomp, vector<vector<unsigned>> & comp) {
-    for (int clause_num = 1; clause_num < clauses.size(); ++clause_num) { // const auto& clause : clauses
-        for (int lit_num = 1; lit_num < clauses[1].literals.size(); ++lit_num) {
+    for (int clause_num = 0; clause_num < clauses.size(); ++clause_num) { // const auto& clause : clauses
+        for (int lit_num = 1; lit_num < clauses[0].literals.size(); ++lit_num) {
             if (clauses[clause_num].literals[lit_num] == 1) {
                 uncomp[lit_num].push_back(clause_num);
             }

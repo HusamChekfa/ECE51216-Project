@@ -6,6 +6,7 @@
 
 int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat) {
     int ret = -100;
+    static int recursive = 1;
     vector<int> units_added_to_solution;
     unordered_set<unsigned> clauses_satisfied; // allow easier undo
     int while_unit_count = 0;
@@ -45,6 +46,20 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
             break;
         }
     }
+    if (literalChoice == 16) {
+        cout << "16";
+    }
+    if (literalChoice == 0) {
+        // no more variables without a solution
+        cout << " no literal c hoices !!! " << endl;
+        return -1;
+    }
+    cout << "recursive = " << recursive << endl;
+    ++recursive;
+    if (recursive == 30) {
+        cout << "recursive = 16";
+        //exit(1);
+    }
 
     decision_one:
     // add decision to solution
@@ -61,6 +76,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         // sat = true;
         return 0;
     }
+
     undo_update_clauses(clauses, literalChoice, uncomp, comp);
     undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll);
     clauses_satisfied_dpll.clear();
@@ -96,6 +112,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         undo_update_clauses(clauses, i, uncomp, comp);
         undo_update_solution(solution, i);
     }
+    --recursive;
 
     return -1;
 
@@ -185,12 +202,16 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
         }
         // same
         for (const unsigned & i : uncomp[literal]) {
-            clauses[i].is_satisfied = true;
-            if (--clauses[i].unassigned == 0) {
-                --g_Unit_count;
+            --clauses[i].unassigned;
+            clauses[i].assigned_literals[literal] = true;
+            if (clauses[i].is_satisfied == false) {
+                clauses[i].is_satisfied = true;
+                if (clauses[i].unassigned == 0) {
+                    --g_Unit_count;
+                }
+                --g_Clause_Count;
+                clauses_satisfied.insert(i);
             }
-            --g_Clause_Count;
-            clauses_satisfied.insert(i);
         }
     }
     else {
@@ -208,12 +229,16 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
         }
         // same
         for (const unsigned & i : comp[-literal]) {
-            clauses[i].is_satisfied = true;
-            if (--clauses[i].unassigned == 0) {
-                --g_Unit_count;
+            --clauses[i].unassigned;
+            clauses[i].assigned_literals[-literal] = true;
+            if (clauses[i].is_satisfied == false) {
+                clauses[i].is_satisfied = true;
+                if (clauses[i].unassigned == 0) {
+                    --g_Unit_count;
+                }
+                --g_Clause_Count;
+                clauses_satisfied.insert(i);
             }
-            --g_Clause_Count;
-            clauses_satisfied.insert(i);
         }
 
     }
@@ -227,7 +252,9 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 break;
             }
             clauses[i].assigned_literals[literal] = false;
-            ++clauses[i].unassigned;
+            if (++clauses[i].unassigned == 2) {
+                --g_Unit_count;
+            }
             -- count;
         }
     }
@@ -237,7 +264,9 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 break;
             }
             clauses[i].assigned_literals[-literal] = false;
-            ++clauses[i].unassigned;
+            if (++clauses[i].unassigned == 2) {
+                --g_Unit_count;
+            }
             -- count;
         }
     }
@@ -262,7 +291,7 @@ void undo_update_solution(vector<int> & solution, const int & literal) {
 int unit_handle_duplicates(const vector<Clause> & clauses, vector<int> & units) {
     //vector<int> units;
     unsigned unit_count = g_Unit_count;
-    for (size_t i = 1; i < clauses.size() && unit_count > 0; ++i) {
+    for (size_t i = 0; i < clauses.size() && unit_count > 0; ++i) {
         if (clauses[i].is_satisfied == false && clauses[i].unassigned == 1) {
             // find false in the vector
             int j = unit_find_false(clauses[i].literals, clauses[i].assigned_literals);
