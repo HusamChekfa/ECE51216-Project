@@ -7,23 +7,115 @@
 int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat) {
     int ret = -100;
     static int recursive = 1;
+    //static int hey = 0;
     vector<int> units_added_to_solution;
     unordered_set<unsigned> clauses_satisfied; // allow easier undo
+    vector<unsigned> while_units_sat;
     int while_unit_count = 0;
+    int total = 0;
 
     unsigned count_added = 0;
     while(g_Unit_count != 0) {
+        //cout << "hey";
+        //++hey;
+        //if (hey == 7) {
+            //cout << "7hey";
+        //}
         if (unit_handle_duplicates(clauses, units_added_to_solution) == -1) {
             // problem .. backtrack .. a * a' = 0
+            for (int i = 0; i < count_added; ++i) {
+                undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
+                undo_update_solution(solution, units_added_to_solution[i]);
+            }
+            undo_update_clauses_satisfied(clauses, clauses_satisfied, while_units_sat);
             return -1;
         }
+        for (int f = while_unit_count; f < units_added_to_solution.size(); ++f) {
+            cout << "unit: " << units_added_to_solution[f] << endl;
+            if  (units_added_to_solution[f] == 14) {
+                cout << "14!!!!" << endl;
+            }
+        }
+        total = 0;
+        for (int x = 0; x < clauses.size(); ++x) {
+            if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+                ++total;
+                cout << "unit clause = " << x << endl;
+            }
+        }
+        if (total != g_Unit_count) {
+            cout << "not equalAAAA!" << endl;
+        }
         for (int temp = while_unit_count; temp < units_added_to_solution.size(); ++temp) {//(int val : units_added_to_solution) {
+            total = 0;
+            for (int x = 0; x < clauses.size(); ++x) {
+                if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+                    ++total;
+                    cout << "unit clause = " << x << endl;
+                }
+            }
+            if (total != g_Unit_count) {
+                cout << "not equalBBB!" << endl;
+            }
             do_update_solution(solution, units_added_to_solution[temp]); // val instead of u[t]
-            if (do_update_clauses(clauses, units_added_to_solution[temp], uncomp, comp, clauses_satisfied) == -1) { // val instead of u[t]
+            if (do_update_clauses(clauses, units_added_to_solution[temp], uncomp, comp, clauses_satisfied, while_units_sat) == -1) { // val instead of u[t]
+                total = 0;
+                for (int x = 0; x < clauses.size(); ++x) {
+                    if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+                        ++total;
+                        cout << "unit clause = " << x << endl;
+                    }
+                }
+                if (total != g_Unit_count) {
+                    cout << "not equalFFFFF!" << endl; // NOT ENTERING
+                }
                 for (int i = 0; i < count_added; ++i) {
                     undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
+                    total = 0;
+                    for (int x = 0; x < clauses.size(); ++x) {
+                        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+                            ++total;
+                            cout << "unit clause = " << x << endl;
+                        }
+                    }
+                    if (total != g_Unit_count) {
+                        cout << "not equalGGGGGG!" << endl;
+                    }
+                    undo_update_solution(solution, units_added_to_solution[i]);
+                    total = 0;
+                    for (int x = 0; x < clauses.size(); ++x) {
+                        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+                            ++total;
+                            cout << "unit clause = " << x << endl;
+                        }
+                    }
+                    if (total != g_Unit_count) {
+                        cout << "not equalHHHHHH!" << endl;
+                    }
                 }
-                undo_update_clauses_satisfied(clauses, clauses_satisfied);
+                undo_update_solution(solution, units_added_to_solution[temp]);
+                total = 0;
+                for (int x = 0; x < clauses.size(); ++x) {
+                    if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+                        ++total;
+                        cout << "unit clause = " << x << endl;
+                    }
+                }
+                if (total != g_Unit_count) {
+                    cout << "not equalIIIIII!" << endl;
+                }
+                undo_update_clauses_satisfied(clauses, clauses_satisfied, while_units_sat);
+                cout << "we're here!!!" << endl;
+                total = 0;
+                for (int x = 0; x < clauses.size(); ++x) {
+                    if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+                        ++total;
+                        cout << "unit clause = " << x << endl;
+                    }
+                }
+                if (total != g_Unit_count) {
+                    cout << "not equalCCC!" << endl;
+                }
                 return -1;
             }
             ++count_added;
@@ -46,9 +138,10 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
             break;
         }
     }
-    if (literalChoice == 16) {
-        cout << "16";
-    }
+    // if (literalChoice == 16) {
+    //     cout << "16";
+    // }
+    cout << literalChoice << endl;
     if (literalChoice == 0) {
         // no more variables without a solution
         cout << " no literal c hoices !!! " << endl;
@@ -61,11 +154,15 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         //exit(1);
     }
 
+    vector<unsigned> dpll_units_sat;
+
+
+
     decision_one:
     // add decision to solution
     do_update_solution(solution, literalChoice);
     // update_function wrt decision
-    if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll) == -1) {
+    if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll, dpll_units_sat) == -1) {
         undo_update_solution(solution, literalChoice);
         goto decision_two;
     }
@@ -77,18 +174,42 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         return 0;
     }
 
+    total = 0;
+    for (int x = 0; x < clauses.size(); ++x) {
+        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+            ++total;
+            cout << "unit clause = " << x << endl;
+        }
+    }
+    if (total != g_Unit_count) {
+        cout << "not equalDDD!" << endl;
+    }
+
     undo_update_clauses(clauses, literalChoice, uncomp, comp);
-    undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll);
+    undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll, dpll_units_sat);
     clauses_satisfied_dpll.clear();
+    dpll_units_sat.clear();
     undo_update_solution(solution, literalChoice);
+
+
 
     decision_two:
 
     literalChoice *= -1;
 
+    total = 0;
+    for (int x = 0; x < clauses.size(); ++x) {
+        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+            ++total;
+        }
+    }
+    if (total != g_Unit_count) {
+        cout << "not equalEEE!" << endl;
+    }
+
     do_update_solution(solution, literalChoice);
 
-    if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll) == -1) {
+    if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll, dpll_units_sat) == -1) {
         undo_update_solution(solution, literalChoice);
         goto both_fail;
     }
@@ -99,23 +220,29 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         return 0;
     }
 
+    for (unsigned x : while_units_sat) {
+        dpll_units_sat.push_back(x);
+    }
+
     undo_update_clauses(clauses, literalChoice, uncomp, comp);
-    undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll);
+    undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll, dpll_units_sat);
     //clauses_satisfied_dpll.clear();
     undo_update_solution(solution, literalChoice);
+    cout << literalChoice << endl;
 
 
     both_fail:
 
-    undo_update_clauses_satisfied(clauses, clauses_satisfied);
-    for (const int i : units_added_to_solution) {
+
+    for (const int & i : units_added_to_solution) {
         undo_update_clauses(clauses, i, uncomp, comp);
         undo_update_solution(solution, i);
     }
+    //undo_update_clauses_satisfied(clauses, clauses_satisfied);
     --recursive;
 
     return -1;
-
+    /*
     // if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll) == -1) {
     //     for (int i = 0; i < count_added; ++i) {
     //         undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
@@ -130,7 +257,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     // add decision to solution
     // update_function wrt decision
     // call DPLL
-    /*
+
      *  if (DPLL(...) == 0) {
      *      sat = true;
      *      return 0;
@@ -152,13 +279,14 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
      */
 }
 
-void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied) {
+void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied, const vector<unsigned> & units_sat) {
     for (const unsigned & i : clauses_satisfied) {
         clauses[i].is_satisfied = false;
-        if (clauses[i].unassigned == 1) {
+        /*if (clauses[i].unassigned == 1) {
             ++g_Unit_count;
-        }
+        }*/
     }
+    g_Unit_count -= units_sat.size();
     g_Clause_Count += clauses_satisfied.size();
 }
 
@@ -185,7 +313,7 @@ void undo_update_clauses(vector<Clause> & clauses, const int & literal, const ve
     }
 }
 
-int do_update_clauses(vector<Clause> & clauses, const int & literal, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, unordered_set<unsigned> & clauses_satisfied) {
+int do_update_clauses(vector<Clause> & clauses, const int & literal, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, unordered_set<unsigned> & clauses_satisfied, vector<unsigned> & units_satisfied) {
     unsigned count = 0; // need for undo, count how many opposite literal clause done so far, in case any get 0'd out, we EXACTLY know how many to un-update
     if (literal > 0) {
         // deal with opposite literal first
@@ -195,7 +323,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 goto error_fixing;
             }
             clauses[i].assigned_literals[literal] = true;
-            if (--clauses[i].unassigned == 1) {
+            if (--clauses[i].unassigned == 1 && clauses[i].is_satisfied == false) {
                 ++g_Unit_count;
             }
             ++count;
@@ -208,6 +336,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 clauses[i].is_satisfied = true;
                 if (clauses[i].unassigned == 0) {
                     --g_Unit_count;
+                    units_satisfied.push_back(i);
                 }
                 --g_Clause_Count;
                 clauses_satisfied.insert(i);
@@ -222,7 +351,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 goto error_fixing;
             }
             clauses[i].assigned_literals[-literal] = true;
-            if (--clauses[i].unassigned == 1) {
+            if (--clauses[i].unassigned == 1 && clauses[i].is_satisfied == false) {
                 ++g_Unit_count;
             }
             ++count;
@@ -252,7 +381,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 break;
             }
             clauses[i].assigned_literals[literal] = false;
-            if (++clauses[i].unassigned == 2) {
+            if (++clauses[i].unassigned == 2 && clauses[i].is_satisfied == false) { // before just the == 2
                 --g_Unit_count;
             }
             -- count;
@@ -264,7 +393,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 break;
             }
             clauses[i].assigned_literals[-literal] = false;
-            if (++clauses[i].unassigned == 2) {
+            if (++clauses[i].unassigned == 2 && clauses[i].is_satisfied == false) { // before just == 2
                 --g_Unit_count;
             }
             -- count;

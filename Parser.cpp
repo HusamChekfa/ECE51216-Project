@@ -57,6 +57,7 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
             clause.literals = vector<int>(numVariables + 1,0);
             clause.assigned_literals = vector<bool>(numVariables + 1, false);
             int literal;
+            //int curr = 0;
             while (ss >> literal) {
                 if (literal == 0) {
                     break; // End of clause
@@ -68,6 +69,7 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
                 else {
                     clause.literals[-literal] = -1;
                 }
+                //curr += literal;
                 //clause.assigned_literals.push_back(false);
                 ++clause.unassigned;
                 ++clauseSize;
@@ -79,6 +81,16 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
             if (clauseSize == 1) {
                 ++g_Unit_count;
             }
+            // int temp = 0;
+            // for (int l = 1; l < clause.literals.size(); ++l) {
+            //     temp += l * clause.literals[l];
+            // }
+            // if (temp == curr) {
+            //     cout << "good" << endl;
+            // }
+            // else {
+            //     cout << "BAD" << endl;
+            // }
             //++completed;
         }
     }
