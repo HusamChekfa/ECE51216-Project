@@ -12,6 +12,8 @@
 #include "Heuristics.h"
 
 unsigned fail = 0;
+unsigned unsat = 0;
+unsigned sat = 0;
 
 void print_solution(const vector<int> & sol);
 
@@ -42,6 +44,7 @@ void check(vector<Clause> checking, const vector<int> & sol) {
     if (checking.size() ==  0) {
         cout << "\t\tSUCCESS !!!! " << endl;
         print_solution(sol);
+        ++sat;
     }
     else {
         cout << "\t\tWRONG SOLUTION!!!!! " << endl;
@@ -56,7 +59,7 @@ void check(vector<Clause> checking, const vector<int> & sol) {
 
         }
         ++fail;
-        exit(1);
+        //exit(1);
     }
     // for (int i = 1; i < sol.size(); ++i) {
     //     for (int x = 0; x < checking.size();) {
@@ -90,7 +93,7 @@ int main() {
     string path = "";
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/";
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllSat/";
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllSat2/";
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllUnSat/";
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf20-01-small.cnf";
     //string path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/";
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/uf20-01.cnf";
@@ -99,6 +102,8 @@ int main() {
     for (const auto& entry : filesystem::directory_iterator(path)) {
         paths.push_back(path + entry.path().filename().string());
     }
+    //path += "uuf50-01.cnf";
+    //paths.push_back(path);
 
     // for (string s : paths) {
     //     cout << s << endl;
@@ -132,16 +137,18 @@ int main() {
             // run_sat() - this prints output in proper format
             //print_solution(solution);
             check(to_check, solution);
-
         }
         else {
             // Unsatisfied
             cout << "\t\tRESULT:UNSAT" << endl;
-
+            ++unsat;
+            //exit(3);
         }
     }
 
     cout << " Fail # " << fail << endl;
+    cout << " Unsat # " << unsat << endl;
+    cout << " Sat # " << sat << endl;
 
     return 0;
 

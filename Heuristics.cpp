@@ -64,6 +64,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
             undo_update_clauses_satisfied(clauses, clauses_satisfied, og); //while_units_sat);
 
             g_Unit_count = t_val(clauses);
+            --g_rec;
             return -1;
         }
 
@@ -77,6 +78,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
                 undo_update_solution(solution, units_added_to_solution[temp]);
                 undo_update_clauses_satisfied(clauses, clauses_satisfied, og);//while_units_sat);
                 g_Unit_count = t_val(clauses);
+                --g_rec;
                 return -1;
             }
             og = og + static_cast<int>(g_Unit_count) - static_cast<int>(og_w);
@@ -92,13 +94,13 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     if (g_Clause_Count == 0) {
         sat = true;
         if (g_val(clauses) == 0) {
-            cout << "yes we're done" << endl;
+            //cout << "yes we're done" << endl;
         }
         else {
-            cout << "nope we're not " << endl;
+            //cout << "nope we're not " << endl;
         }
         --g_rec;
-        cout << "line 118 recursive = " << g_rec << endl;
+        //cout << "line 118 recursive = " << g_rec << endl;
         return 0;
     }
     unordered_set<unsigned> clauses_satisfied_dpll;
@@ -115,11 +117,13 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     if (literalChoice == 0) {
         // no more variables without a solution
         //cout << " no literal c hoices !!! " << endl;
+        --g_rec;
+        //cout << "FFFrecursive = " << g_rec << endl;
         return -1;
     }
-    cout << "recursive = " << g_rec << endl;
-    ++g_rec;
-    cout << "recursive = " << g_rec << endl;
+    //cout << "AAArecursive = " << g_rec << endl;
+    //++g_rec;
+    //cout << "BBBrecursive = " << g_rec << endl;
     if (g_rec == 30) {
         //cout << "recursive = 16";
         //exit(1);
@@ -145,7 +149,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         // don't think I need this:
         // sat = true;
         --g_rec;
-        cout << "line 178 recursive = " << g_rec << endl;
+        //cout << "line 178 recursive = " << g_rec << endl;
         return 0;
     }
 
@@ -178,7 +182,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         // don't think I need this:
         // sat = true;
         --g_rec;
-        cout << "line 217 recursive = " << g_rec << endl;
+        //cout << "line 217 recursive = " << g_rec << endl;
         return 0;
     }
 
@@ -203,7 +207,10 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     //undo_update_clauses_satisfied(clauses, clauses_satisfied);
     undo_update_clauses_satisfied(clauses, clauses_satisfied, og);
     --g_rec;
-    cout << "recursive = " << g_rec << endl;
+    if (g_rec == 239) {
+        //cout << "hi";
+    }
+    //cout << "CCCrecursive = " << g_rec << endl;
     g_Unit_count = t_val(clauses);
 
     return -1;
