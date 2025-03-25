@@ -4,130 +4,103 @@
 
 #include "Heuristics.h"
 
+unsigned g_rec = 0; // global - # of unresolved clauses
+
+unsigned g_val(const vector<Clause> & clauses) {
+    unsigned ret = 0;
+    for (int i = 0; i < clauses.size(); ++i) {
+        if (clauses[i].is_satisfied == false) {
+            ++ret;
+        }
+    }
+    return ret;
+}
+unsigned t_val(const vector<Clause> & clauses) {
+    unsigned tot = 0;
+    for (int x = 0; x < clauses.size(); ++x) {
+        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+            ++tot;
+            //cout << "unit clause = " << x << endl;
+        }
+    }
+
+    return tot;
+}
+
+bool total(const vector<Clause> & clauses) {
+    int total = 0;
+    for (int x = 0; x < clauses.size(); ++x) {
+        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
+            ++total;
+            //cout << "unit clause = " << x << endl;
+        }
+    }
+    return total == g_Unit_count;
+}
 int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat) {
     int ret = -100;
-    static int recursive = 1;
+    //static int recursive = 1;
+    ++g_rec;
     //static int hey = 0;
     vector<int> units_added_to_solution;
     unordered_set<unsigned> clauses_satisfied; // allow easier undo
     vector<unsigned> while_units_sat;
     int while_unit_count = 0;
-    int total = 0;
-
+    //int total = 0;
+    //unsigned og_unit = g_Unit_count;
     unsigned count_added = 0;
+    int og = 0;
+    unsigned og_w = g_Unit_count;
+
     while(g_Unit_count != 0) {
-        //cout << "hey";
-        //++hey;
-        //if (hey == 7) {
-            //cout << "7hey";
-        //}
+
         if (unit_handle_duplicates(clauses, units_added_to_solution) == -1) {
             // problem .. backtrack .. a * a' = 0
+
             for (int i = 0; i < count_added; ++i) {
                 undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
                 undo_update_solution(solution, units_added_to_solution[i]);
             }
-            undo_update_clauses_satisfied(clauses, clauses_satisfied, while_units_sat);
+            undo_update_clauses_satisfied(clauses, clauses_satisfied, og); //while_units_sat);
+
+            g_Unit_count = t_val(clauses);
             return -1;
         }
-        for (int f = while_unit_count; f < units_added_to_solution.size(); ++f) {
-            cout << "unit: " << units_added_to_solution[f] << endl;
-            if  (units_added_to_solution[f] == 14) {
-                cout << "14!!!!" << endl;
-            }
-        }
-        total = 0;
-        for (int x = 0; x < clauses.size(); ++x) {
-            if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-                ++total;
-                cout << "unit clause = " << x << endl;
-            }
-        }
-        if (total != g_Unit_count) {
-            cout << "not equalAAAA!" << endl;
-        }
+
         for (int temp = while_unit_count; temp < units_added_to_solution.size(); ++temp) {//(int val : units_added_to_solution) {
-            total = 0;
-            for (int x = 0; x < clauses.size(); ++x) {
-                if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-                    ++total;
-                    cout << "unit clause = " << x << endl;
-                }
-            }
-            if (total != g_Unit_count) {
-                cout << "not equalBBB!" << endl;
-            }
             do_update_solution(solution, units_added_to_solution[temp]); // val instead of u[t]
             if (do_update_clauses(clauses, units_added_to_solution[temp], uncomp, comp, clauses_satisfied, while_units_sat) == -1) { // val instead of u[t]
-                total = 0;
-                for (int x = 0; x < clauses.size(); ++x) {
-                    if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-                        ++total;
-                        cout << "unit clause = " << x << endl;
-                    }
-                }
-                if (total != g_Unit_count) {
-                    cout << "not equalFFFFF!" << endl; // NOT ENTERING
-                }
                 for (int i = 0; i < count_added; ++i) {
                     undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
-                    total = 0;
-                    for (int x = 0; x < clauses.size(); ++x) {
-                        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-                            ++total;
-                            cout << "unit clause = " << x << endl;
-                        }
-                    }
-                    if (total != g_Unit_count) {
-                        cout << "not equalGGGGGG!" << endl;
-                    }
                     undo_update_solution(solution, units_added_to_solution[i]);
-                    total = 0;
-                    for (int x = 0; x < clauses.size(); ++x) {
-                        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-                            ++total;
-                            cout << "unit clause = " << x << endl;
-                        }
-                    }
-                    if (total != g_Unit_count) {
-                        cout << "not equalHHHHHH!" << endl;
-                    }
                 }
                 undo_update_solution(solution, units_added_to_solution[temp]);
-                total = 0;
-                for (int x = 0; x < clauses.size(); ++x) {
-                    if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-                        ++total;
-                        cout << "unit clause = " << x << endl;
-                    }
-                }
-                if (total != g_Unit_count) {
-                    cout << "not equalIIIIII!" << endl;
-                }
-                undo_update_clauses_satisfied(clauses, clauses_satisfied, while_units_sat);
-                cout << "we're here!!!" << endl;
-                total = 0;
-                for (int x = 0; x < clauses.size(); ++x) {
-                    if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-                        ++total;
-                        cout << "unit clause = " << x << endl;
-                    }
-                }
-                if (total != g_Unit_count) {
-                    cout << "not equalCCC!" << endl;
-                }
+                undo_update_clauses_satisfied(clauses, clauses_satisfied, og);//while_units_sat);
+                g_Unit_count = t_val(clauses);
                 return -1;
             }
+            og = og + static_cast<int>(g_Unit_count) - static_cast<int>(og_w);
+            og_w = g_Unit_count;
             ++count_added;
             ++while_unit_count;
         }
     }
+
+
+
     // check if all clauses are satisfied; if yes -> formula is SAT!
     if (g_Clause_Count == 0) {
         sat = true;
+        if (g_val(clauses) == 0) {
+            cout << "yes we're done" << endl;
+        }
+        else {
+            cout << "nope we're not " << endl;
+        }
+        --g_rec;
+        cout << "line 118 recursive = " << g_rec << endl;
         return 0;
     }
-
     unordered_set<unsigned> clauses_satisfied_dpll;
     //unordered_set<unsigned> union_clauses;
     int literalChoice = 0;
@@ -138,25 +111,24 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
             break;
         }
     }
-    // if (literalChoice == 16) {
-    //     cout << "16";
-    // }
-    cout << literalChoice << endl;
+
     if (literalChoice == 0) {
         // no more variables without a solution
-        cout << " no literal c hoices !!! " << endl;
+        //cout << " no literal c hoices !!! " << endl;
         return -1;
     }
-    cout << "recursive = " << recursive << endl;
-    ++recursive;
-    if (recursive == 30) {
-        cout << "recursive = 16";
+    cout << "recursive = " << g_rec << endl;
+    ++g_rec;
+    cout << "recursive = " << g_rec << endl;
+    if (g_rec == 30) {
+        //cout << "recursive = 16";
         //exit(1);
     }
 
     vector<unsigned> dpll_units_sat;
 
-
+    int og_d = 0;
+    unsigned og_d_w = g_Unit_count;
 
     decision_one:
     // add decision to solution
@@ -166,30 +138,27 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         undo_update_solution(solution, literalChoice);
         goto decision_two;
     }
+    og_d = og_d + static_cast<int>(g_Unit_count) - static_cast<int>(og_d_w);
     // call DPLL
     if (DPLL(clauses, solution, uncomp, comp, sat) == 0) {
         // sat
         // don't think I need this:
         // sat = true;
+        --g_rec;
+        cout << "line 178 recursive = " << g_rec << endl;
         return 0;
     }
 
-    total = 0;
-    for (int x = 0; x < clauses.size(); ++x) {
-        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-            ++total;
-            cout << "unit clause = " << x << endl;
-        }
-    }
-    if (total != g_Unit_count) {
-        cout << "not equalDDD!" << endl;
-    }
-
     undo_update_clauses(clauses, literalChoice, uncomp, comp);
-    undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll, dpll_units_sat);
+    undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll, og_d);// dpll_units_sat);
     clauses_satisfied_dpll.clear();
     dpll_units_sat.clear();
     undo_update_solution(solution, literalChoice);
+
+    g_Unit_count = t_val(clauses);
+
+    og_d = 0;
+    og_d_w = g_Unit_count;
 
 
 
@@ -197,38 +166,31 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
 
     literalChoice *= -1;
 
-    total = 0;
-    for (int x = 0; x < clauses.size(); ++x) {
-        if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
-            ++total;
-        }
-    }
-    if (total != g_Unit_count) {
-        cout << "not equalEEE!" << endl;
-    }
-
     do_update_solution(solution, literalChoice);
 
     if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll, dpll_units_sat) == -1) {
         undo_update_solution(solution, literalChoice);
         goto both_fail;
     }
+    og_d = og_d + static_cast<int>(g_Unit_count) - static_cast<int>(og_d_w);
     if (DPLL(clauses, solution, uncomp, comp, sat) == 0) {
         // sat
         // don't think I need this:
         // sat = true;
+        --g_rec;
+        cout << "line 217 recursive = " << g_rec << endl;
         return 0;
     }
 
-    for (unsigned x : while_units_sat) {
-        dpll_units_sat.push_back(x);
-    }
+    // for (unsigned x : while_units_sat) {
+    //     dpll_units_sat.push_back(x);
+    // }
 
     undo_update_clauses(clauses, literalChoice, uncomp, comp);
-    undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll, dpll_units_sat);
+    undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll, og_d);// dpll_units_sat);
     //clauses_satisfied_dpll.clear();
     undo_update_solution(solution, literalChoice);
-    cout << literalChoice << endl;
+    //cout << literalChoice << endl;
 
 
     both_fail:
@@ -239,7 +201,10 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         undo_update_solution(solution, i);
     }
     //undo_update_clauses_satisfied(clauses, clauses_satisfied);
-    --recursive;
+    undo_update_clauses_satisfied(clauses, clauses_satisfied, og);
+    --g_rec;
+    cout << "recursive = " << g_rec << endl;
+    g_Unit_count = t_val(clauses);
 
     return -1;
     /*
@@ -279,14 +244,14 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
      */
 }
 
-void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied, const vector<unsigned> & units_sat) {
+void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied, const int & val) { //const vector<unsigned> & units_sat) {
     for (const unsigned & i : clauses_satisfied) {
         clauses[i].is_satisfied = false;
         /*if (clauses[i].unassigned == 1) {
             ++g_Unit_count;
         }*/
     }
-    g_Unit_count -= units_sat.size();
+    g_Unit_count -= val; //units_sat.size();
     g_Clause_Count += clauses_satisfied.size();
 }
 
@@ -364,6 +329,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 clauses[i].is_satisfied = true;
                 if (clauses[i].unassigned == 0) {
                     --g_Unit_count;
+                    units_satisfied.push_back(i);
                 }
                 --g_Clause_Count;
                 clauses_satisfied.insert(i);
@@ -441,7 +407,7 @@ int unit_find_false(const vector<int> & literals, const vector<bool> & bools) {
             return i;
         }
     }
-    cout << "ERROR: UNIT_FIND_FALSE RETURNED -1" << endl;
+    //cout << "ERROR: UNIT_FIND_FALSE RETURNED -1" << endl;
     exit(1); // should never happen.
 }
 

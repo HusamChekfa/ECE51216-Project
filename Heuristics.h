@@ -13,7 +13,7 @@
 
 // GLOBAL VARIABLES!
 
-
+extern unsigned g_rec; // global - # of unresolved clauses
 
 
 /************************************
@@ -38,7 +38,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
 
 void undo_update_clauses(vector<Clause> & clauses, const int & literal, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp);
 
-void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied, const vector<unsigned> & units_sat);
+void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied, const int & val); //const vector<unsigned> & units_sat);
 
 /************************************
  *
