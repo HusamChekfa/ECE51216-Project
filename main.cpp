@@ -43,7 +43,7 @@ void check(vector<Clause> checking, const vector<int> & sol) {
     }*/
     if (checking.size() ==  0) {
         cout << "\t\tSUCCESS !!!! " << endl;
-        print_solution(sol);
+        //print_solution(sol);
         ++sat;
     }
     else {
@@ -59,7 +59,7 @@ void check(vector<Clause> checking, const vector<int> & sol) {
 
         }
         ++fail;
-        //exit(1);
+        exit(1);
     }
     // for (int i = 1; i < sol.size(); ++i) {
     //     for (int x = 0; x < checking.size();) {
@@ -91,13 +91,47 @@ void print_solution(const vector<int> & sol) {
 
 int main() {
     string path = "";
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/";
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllSat/";
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllUnSat/";
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/";
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllSat/";
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllUnSat/";
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf20-01-small.cnf";
     //string path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/";
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/uf20-01.cnf";
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/broken.cnf";
+
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf20-91/"; // 1000 SAT
+
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf50-218/"; // 1000 SAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf50-218/"; // 1000 UNSAT
+
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf75-325/"; // 100 SAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf75-325/"; // 100 UNSAT
+
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
+
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
+
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf150-645/"; // 100 UNSAT
+
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf175-753/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf175-753/"; // 100 UNSAT
+
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf200-860/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf200-860/"; // 100 UNSAT
+
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf225-960/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf225-960/"; // 100 UNSAT
+
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf250-1065/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf250-1065/"; // 100 UNSAT
+
+
+
+
+
     vector<string> paths;
     for (const auto& entry : filesystem::directory_iterator(path)) {
         paths.push_back(path + entry.path().filename().string());
