@@ -41,6 +41,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     int ret = -100;
     //static int recursive = 1;
     ++g_rec;
+    //cout << g_rec << endl;
     //static int hey = 0;
     vector<int> units_added_to_solution;
     unordered_set<unsigned> clauses_satisfied; // allow easier undo

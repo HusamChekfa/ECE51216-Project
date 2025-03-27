@@ -10,6 +10,7 @@
 #include <string>
 #include "Parser.h"
 #include "Heuristics.h"
+#include <chrono>
 
 unsigned fail = 0;
 unsigned unsat = 0;
@@ -108,12 +109,12 @@ int main() {
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf75-325/"; // 100 UNSAT
 
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
+    // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
 
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
+    // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
 
-    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf150-645/"; // 100 UNSAT
 
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf175-753/"; // 100 SAT
@@ -162,7 +163,9 @@ int main() {
         vector<vector<unsigned>> complemented(numVars + 1);
         int c = Parse_uncomp(clauses, uncomplemented, complemented);
         vector<Clause> to_check = clauses;
+        auto start = std::chrono::high_resolution_clock::now();
         int b = DPLL(clauses, solution, uncomplemented, complemented, satisfied);
+        auto end = std::chrono::high_resolution_clock::now();
         if (b == 0) {
             // Satsified
             // call clean_solution
@@ -171,6 +174,8 @@ int main() {
             // run_sat() - this prints output in proper format
             //print_solution(solution);
             check(to_check, solution);
+            std::chrono::duration<double> elapsed = end - start;
+            cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
         }
         else {
             // Unsatisfied
