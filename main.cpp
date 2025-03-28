@@ -12,7 +12,7 @@
 #include "Heuristics.h"
 #include <chrono>
 
-unsigned fail = 0;
+unsigned fail = 0;tesging
 unsigned unsat = 0;
 unsigned sat = 0;
 
