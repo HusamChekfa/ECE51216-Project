@@ -10,10 +10,13 @@
 #include <algorithm>
 //#include <set>
 #include <unordered_set>
+#include <chrono>
 
 // GLOBAL VARIABLES!
 
 extern unsigned g_rec; // global - # of unresolved clauses
+extern std::chrono::high_resolution_clock::time_point global_start_time;
+extern std::chrono::high_resolution_clock::time_point global_end_time;
 
 
 /************************************
