@@ -12,7 +12,7 @@
 #include "Heuristics.h"
 #include <chrono>
 
-unsigned fail = 0;tesging
+unsigned fail = 0;
 unsigned unsat = 0;
 unsigned sat = 0;
 
@@ -102,19 +102,19 @@ int main() {
 
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf20-91/"; // 1000 SAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf50-218/"; // 1000 SAT
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf50-218/"; // 1000 UNSAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf50-218/"; // 1000 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf50-218/"; // 1000 UNSAT
 
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf75-325/"; // 100 SAT
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf75-325/"; // 100 UNSAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf75-325/"; // 100 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
     // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
 
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
     // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf150-645/"; // 100 UNSAT
 
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf175-753/"; // 100 SAT
@@ -146,44 +146,48 @@ int main() {
    // paths.push_back(path);
     //paths.push_back("broken.cnf");
 
-    for (const string & p : paths) {
-        g_rec = 0;
-        size_t numVars = 0;
-        cout << p << endl;
-        bool satisfied = false;
-        vector<Clause> clauses;
-        //solution.clear();
-        //uncomplemented.clear();
-        //complemented.clear();
-        //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/ok.cnf";
+   for (const string & p : paths) {
+       for (int zzz = 0; zzz < 5; ++zzz) {
+           g_rec = 0;
+           size_t numVars = 0;
+           cout << p << endl;
+           bool satisfied = false;
+           vector<Clause> clauses;
+           //solution.clear();
+           //uncomplemented.clear();
+           //complemented.clear();
+           //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/ok.cnf";
 
-        int a = Parse(p, clauses, numVars);
-        vector<int> solution(numVars + 1, 0);
-        vector<vector<unsigned>> uncomplemented(numVars + 1);
-        vector<vector<unsigned>> complemented(numVars + 1);
-        int c = Parse_uncomp(clauses, uncomplemented, complemented);
-        vector<Clause> to_check = clauses;
-        auto start = std::chrono::high_resolution_clock::now();
-        int b = DPLL(clauses, solution, uncomplemented, complemented, satisfied);
-        auto end = std::chrono::high_resolution_clock::now();
-        if (b == 0) {
-            // Satsified
-            // call clean_solution
-            clean_solution(solution);
-            cout << "\t\tRESULT:SAT" << endl;
-            // run_sat() - this prints output in proper format
-            //print_solution(solution);
-            check(to_check, solution);
-            std::chrono::duration<double> elapsed = end - start;
-            cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
-        }
-        else {
-            // Unsatisfied
-            cout << "\t\tRESULT:UNSAT" << endl;
-            ++unsat;
-            //exit(3);
-        }
+           int a = Parse(p, clauses, numVars);
+           vector<int> solution(numVars + 1, 0);
+           vector<int> fSol = solution;
+           vector<vector<unsigned>> uncomplemented(numVars + 1);
+           vector<vector<unsigned>> complemented(numVars + 1);
+           int c = Parse_uncomp(clauses, uncomplemented, complemented);
+           vector<Clause> to_check = clauses;
+           auto start = std::chrono::high_resolution_clock::now();
+           int b = DPLL(clauses, solution, fSol, uncomplemented, complemented, satisfied);
+           auto end = std::chrono::high_resolution_clock::now();
+           if (b == 0) {
+               // Satsified
+               // call clean_solution
+               clean_solution(fSol);
+               cout << "\t\tRESULT:SAT" << endl;
+               // run_sat() - this prints output in proper format
+               //print_solution(fSol);
+               check(to_check, fSol);
+               std::chrono::duration<double> elapsed = end - start;
+               cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
+           }
+           else {
+               // Unsatisfied
+               cout << "\t\tRESULT:UNSAT" << endl;
+               ++unsat;
+               //exit(3);
+           }
+       }
     }
+
 
     cout << " Fail # " << fail << endl;
     cout << " Unsat # " << unsat << endl;
@@ -192,7 +196,10 @@ int main() {
     return 0;
 
 
-    /*
+
+
+
+
     size_t numVars = 0;
     //vector<Clause> clauses(1);
     vector<Clause> clauses;
@@ -203,41 +210,60 @@ int main() {
     string fileName = "";
     fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/uf20-01.cnf";
     fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf20-01-small.cnf";
+    fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/uf125-054.cnf";
 
 
     //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/b.cnf";
     //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/quinn.cnf";
     //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/ok.cnf";
-    fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/global.cnf";
+    //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/global.cnf";
+
+
 
 
     cout << "Current working directory: " << filesystem::current_path() << endl;
+
+    cout << fileName << endl;
+
     int a = Parse(fileName, clauses, numVars);
+    if (a == 1) {
+        cout << "Failed to open file." << endl;
+        exit(5);
+    }
 
     vector<int> solution(numVars + 1, 0);
+    vector<int> fSol = solution;
     vector<vector<unsigned>> uncomplemented(numVars + 1);
     vector<vector<unsigned>> complemented(numVars + 1);
     int c = Parse_uncomp(clauses, uncomplemented, complemented);
 
     vector<Clause> to_check = clauses;
 
-    int b = DPLL(clauses, solution, uncomplemented, complemented, satisfied);
+    auto start = std::chrono::high_resolution_clock::now();
+
+    int b = DPLL(clauses, solution, fSol, uncomplemented, complemented, satisfied);
+
+    auto end = std::chrono::high_resolution_clock::now();
 
     // STDOUT?
     if (b == 0) {
         // Satsified
         // call clean_solution
-        clean_solution(solution);
+        clean_solution(fSol);
         cout << "RESULT:SAT" << endl;
         // run_sat() - this prints output in proper format
-        print_solution(solution);
-        check(to_check, solution);
+        print_solution(fSol);
+        check(to_check, fSol);
+        std::chrono::duration<double> elapsed = end - start;
+        cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
 
     }
     else {
         // Unsatisfied
         cout << "RESULT:UNSAT" << endl;
     }
+
+    /*
 
     string path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/";
     vector<string> paths;
@@ -275,8 +301,9 @@ int main() {
         // Unsatisfied
         cout << "RESULT:UNSAT" << endl;
     }
-
     */
+
+
 
     return 0;
 }

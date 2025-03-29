@@ -37,9 +37,11 @@ bool total(const vector<Clause> & clauses) {
     }
     return total == g_Unit_count;
 }
-int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat) {
+int DPLL(vector<Clause> clauses, vector<int> solution, vector<int> & final_sol, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat) {
     int ret = -100;
     //static int recursive = 1;
+    const unsigned og_g_clause = g_Clause_Count;
+    const unsigned og_g_unit = g_Unit_count;
     ++g_rec;
     //cout << g_rec << endl;
     //static int hey = 0;
@@ -57,6 +59,9 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
 
         if (unit_handle_duplicates(clauses, units_added_to_solution) == -1) {
             // problem .. backtrack .. a * a' = 0
+            g_Clause_Count = og_g_clause;
+            g_Unit_count = og_g_unit;
+            return -1;
 
             for (int i = 0; i < count_added; ++i) {
                 undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
@@ -72,10 +77,14 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         for (int temp = while_unit_count; temp < units_added_to_solution.size(); ++temp) {//(int val : units_added_to_solution) {
             do_update_solution(solution, units_added_to_solution[temp]); // val instead of u[t]
             if (do_update_clauses(clauses, units_added_to_solution[temp], uncomp, comp, clauses_satisfied, while_units_sat) == -1) { // val instead of u[t]
+                g_Clause_Count = og_g_clause;
+                g_Unit_count = og_g_unit;
+                return -1;
                 for (int i = 0; i < count_added; ++i) {
                     undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
                     undo_update_solution(solution, units_added_to_solution[i]);
                 }
+
                 undo_update_solution(solution, units_added_to_solution[temp]);
                 undo_update_clauses_satisfied(clauses, clauses_satisfied, og);//while_units_sat);
                 g_Unit_count = t_val(clauses);
@@ -95,13 +104,14 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     if (g_Clause_Count == 0) {
         sat = true;
         if (g_val(clauses) == 0) {
-            //cout << "yes we're done" << endl;
+            cout << "yes we're done" << endl;
         }
         else {
-            //cout << "nope we're not " << endl;
+            cout << "nope we're not " << endl;
         }
         --g_rec;
         //cout << "line 118 recursive = " << g_rec << endl;
+        final_sol = solution;
         return 0;
     }
     unordered_set<unsigned> clauses_satisfied_dpll;
@@ -120,6 +130,8 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         //cout << " no literal c hoices !!! " << endl;
         --g_rec;
         //cout << "FFFrecursive = " << g_rec << endl;
+        g_Clause_Count = og_g_clause;
+        g_Unit_count = og_g_unit;
         return -1;
     }
     //cout << "AAArecursive = " << g_rec << endl;
@@ -134,18 +146,24 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
 
     int og_d = 0;
     unsigned og_d_w = g_Unit_count;
+    vector<Clause> tClauses = clauses;
+    vector<int> tSol = solution;
+
+    const unsigned og_g_clause_d = g_Clause_Count;
+    const unsigned og_g_unit_d = g_Unit_count;
 
     decision_one:
     // add decision to solution
     do_update_solution(solution, literalChoice);
     // update_function wrt decision
     if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll, dpll_units_sat) == -1) {
+        goto decision_two;
         undo_update_solution(solution, literalChoice);
         goto decision_two;
     }
     og_d = og_d + static_cast<int>(g_Unit_count) - static_cast<int>(og_d_w);
     // call DPLL
-    if (DPLL(clauses, solution, uncomp, comp, sat) == 0) {
+    if (DPLL(clauses, solution, final_sol, uncomp, comp, sat) == 0) {
         // sat
         // don't think I need this:
         // sat = true;
@@ -154,11 +172,13 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         return 0;
     }
 
+    /*
     undo_update_clauses(clauses, literalChoice, uncomp, comp);
     undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll, og_d);// dpll_units_sat);
-    clauses_satisfied_dpll.clear();
-    dpll_units_sat.clear();
-    undo_update_solution(solution, literalChoice);
+    */
+    //clauses_satisfied_dpll.clear();
+    //dpll_units_sat.clear();
+    //undo_update_solution(solution, literalChoice);
 
     g_Unit_count = t_val(clauses);
 
@@ -168,17 +188,22 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
 
 
     decision_two:
+    g_Clause_Count = og_g_clause_d;
+    g_Unit_count = og_g_unit_d;
 
     literalChoice *= -1;
 
-    do_update_solution(solution, literalChoice);
+    do_update_solution(tSol, literalChoice);
 
-    if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll, dpll_units_sat) == -1) {
+    if (do_update_clauses(tClauses, literalChoice, uncomp, comp, clauses_satisfied_dpll, dpll_units_sat) == -1) {
+        g_Clause_Count = og_g_clause;
+        g_Unit_count = og_g_unit;
+        return -1;
         undo_update_solution(solution, literalChoice);
         goto both_fail;
     }
     og_d = og_d + static_cast<int>(g_Unit_count) - static_cast<int>(og_d_w);
-    if (DPLL(clauses, solution, uncomp, comp, sat) == 0) {
+    if (DPLL(tClauses, tSol, final_sol, uncomp, comp, sat) == 0) {
         // sat
         // don't think I need this:
         // sat = true;
@@ -186,6 +211,10 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         //cout << "line 217 recursive = " << g_rec << endl;
         return 0;
     }
+    g_Clause_Count = og_g_clause;
+    g_Unit_count = og_g_unit;
+
+    return -1;
 
     // for (unsigned x : while_units_sat) {
     //     dpll_units_sat.push_back(x);
@@ -293,6 +322,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
         for (const unsigned & i : comp[literal]) {
             if (clauses[i].is_satisfied == false && clauses[i].unassigned == 1) {
                 // ERROR !
+                return -1;
                 goto error_fixing;
             }
             clauses[i].assigned_literals[literal] = true;
@@ -321,6 +351,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
         for (const unsigned & i : uncomp[-literal]) {
             if (clauses[i].is_satisfied == false && clauses[i].unassigned == 1) {
                 // ERROR !
+                return -1;
                 goto error_fixing;
             }
             clauses[i].assigned_literals[-literal] = true;

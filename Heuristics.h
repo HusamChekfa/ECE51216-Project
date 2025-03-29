@@ -24,7 +24,7 @@ extern unsigned g_rec; // global - # of unresolved clauses
  *
  ***********************************/
 
-int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat);
+int DPLL(vector<Clause> clauses, vector<int> solution, vector<int> & final_sol, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat);
 
 /************************************
  *
