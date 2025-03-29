@@ -5,6 +5,8 @@
 #include "Heuristics.h"
 
 unsigned g_rec = 0; // global - # of unresolved clauses
+//std::chrono::high_resolution_clock::time_point global_start_time;
+//std::chrono::high_resolution_clock::time_point global_end_time;
 
 unsigned g_val(const vector<Clause> & clauses) {
     unsigned ret = 0;
@@ -40,6 +42,9 @@ bool total(const vector<Clause> & clauses) {
 int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat) {
     int ret = -100;
     //static int recursive = 1;
+    //global_end_time = std::chrono::high_resolution_clock::now();
+    //std::chrono::duration<double> duration = global_end_time - global_start_time;
+    //cout << "ref time: " << duration.count() << " seconds" << endl;
     ++g_rec;
     //cout << g_rec << endl;
     //static int hey = 0;
@@ -145,6 +150,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     }
     og_d = og_d + static_cast<int>(g_Unit_count) - static_cast<int>(og_d_w);
     // call DPLL
+    //global_start_time = std::chrono::high_resolution_clock::now();
     if (DPLL(clauses, solution, uncomp, comp, sat) == 0) {
         // sat
         // don't think I need this:
