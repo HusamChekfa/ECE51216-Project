@@ -175,7 +175,7 @@ int main() {
                 clean_solution(solution);
                 cout << "\t\tRESULT:SAT" << endl;
                 // run_sat() - this prints output in proper format
-                //print_solution(solution);
+                print_solution(solution);
                 check(to_check, solution);
                 std::chrono::duration<double> elapsed = end - start;
                 cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
