@@ -73,6 +73,7 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
                 //clause.assigned_literals.push_back(false);
                 ++clause.unassigned;
                 ++clauseSize;
+                clause.lits.push_back(literal);
             }
             //clauses[i] = clause;
             ++i;
