@@ -49,6 +49,8 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
             string temp;
             ss >> temp >> temp >> numVariables >> numClauses;
             //clauses = vector<Clause>(numVariables + 1);
+            g_dlis_pos = vector<int>(numVariables + 1, 0);
+            g_dlis_neg = vector<int>(numVariables + 1, 0);
         }
         // Process clauses (lines with integers followed by 0)
         else {
@@ -65,9 +67,11 @@ int Parse(const string &filename, vector<Clause> & clauses, size_t & numVars) {
                 //clause.literals.push_back(literal);
                 else if (literal > 0) {
                     clause.literals[literal] = 1;
+                    ++g_dlis_pos[literal];
                 }
                 else {
                     clause.literals[-literal] = -1;
+                    ++g_dlis_neg[-literal];
                 }
                 //curr += literal;
                 //clause.assigned_literals.push_back(false);

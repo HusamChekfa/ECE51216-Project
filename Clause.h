@@ -13,6 +13,9 @@ enum Variable { COMPLEMENT = -1, UNASSIGNED = 0, UNCOMPLEMENT = 1};
 extern unsigned g_Clause_Count; // global - # of unresolved clauses
 extern unsigned g_Unit_count;   // global - # of unit clauses
 
+extern vector<int> g_dlis_pos;
+extern vector<int> g_dlis_neg;
+
 struct Clause {
     vector<int> literals; // 0 1 2 3 4 5 // 0 1 0 0 -1 -1
     vector<bool> assigned_literals; // keep track of which literals have an assigned value

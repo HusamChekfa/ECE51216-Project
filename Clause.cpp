@@ -7,4 +7,6 @@
 unsigned g_Clause_Count = 0; // global - # of unresolved clauses
 unsigned g_Unit_count = 0;   // global - # of unit clauses
 
+vector<int> g_dlis_pos;
+vector<int> g_dlis_neg;
 
