@@ -112,7 +112,7 @@ int main() {
     // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
 
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
-    // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
 
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf150-645/"; // 100 UNSAT
@@ -134,9 +134,10 @@ int main() {
 
 
     vector<string> paths;
-    for (const auto& entry : filesystem::directory_iterator(path)) {
-        paths.push_back(path + entry.path().filename().string());
-    }
+    paths.push_back("C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/uf125-054.cnf");
+    //for (const auto& entry : filesystem::directory_iterator(path)) {
+    //    paths.push_back(path + entry.path().filename().string());
+    //}
     //path += "uuf50-01.cnf";
     //paths.push_back(path);
 
@@ -184,6 +185,8 @@ int main() {
                 // Unsatisfied
                 cout << "\t\tRESULT:UNSAT" << endl;
                 ++unsat;
+                std::chrono::duration<double> elapsed = end - start;
+                cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
                 //exit(3);
             }
         }
