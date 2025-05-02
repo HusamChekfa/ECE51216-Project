@@ -29,6 +29,21 @@ extern unsigned g_rec; // global - # of unresolved clauses
 
 int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat);
 
+
+/************************************
+ *
+ *
+ *               DLIS
+ *
+ *
+ ***********************************/
+
+void DLIS_find_unate(const vector<int> & curr_sol);
+
+void do_update_DLIS(const int & literal);
+
+void undo_update_DLIS(const int & literal);
+
 /************************************
  *
  *

@@ -91,7 +91,7 @@ void print_solution(const vector<int> & sol) {
 }
 
 int main() {
-    string path = "";
+    string path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf20-01-small.cnf";
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/20v91c1000iAllSat/";
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllSat/";
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/50v218c1000iAllUnSat/";
@@ -102,17 +102,17 @@ int main() {
 
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf20-91/"; // 1000 SAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf50-218/"; // 1000 SAT
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf50-218/"; // 1000 UNSAT
+   // path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf50-218/"; // 1000 SAT
+   // path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf50-218/"; // 1000 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf75-325/"; // 100 SAT
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf75-325/"; // 100 UNSAT
+   // path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf75-325/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf75-325/"; // 100 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
     // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
-    // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
 
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf150-645/"; // 100 UNSAT
@@ -134,9 +134,11 @@ int main() {
 
 
     vector<string> paths;
+    //paths.push_back(path);
     for (const auto& entry : filesystem::directory_iterator(path)) {
         paths.push_back(path + entry.path().filename().string());
     }
+    //for (const auto & a : paths) cout << a << endl;
     //path += "uuf50-01.cnf";
     //paths.push_back(path);
 
@@ -184,6 +186,8 @@ int main() {
                 // Unsatisfied
                 cout << "\t\tRESULT:UNSAT" << endl;
                 ++unsat;
+                std::chrono::duration<double> elapsed = end - start;
+                cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
                 //exit(3);
             }
         }

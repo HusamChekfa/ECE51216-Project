@@ -51,47 +51,70 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     vector<int> units_added_to_solution;
     unordered_set<unsigned> clauses_satisfied; // allow easier undo
     vector<unsigned> while_units_sat;
+    vector<unsigned> while_unates_sat;
     int while_unit_count = 0;
     //int total = 0;
     //unsigned og_unit = g_Unit_count;
     unsigned count_added = 0;
     int og = 0;
     unsigned og_w = g_Unit_count;
+    vector<int> unates_added_to_solution;
 
-    while(g_Unit_count != 0) {
 
-        if (unit_handle_duplicates(clauses, units_added_to_solution) == -1) {
-            // problem .. backtrack .. a * a' = 0
+    while ((g_Unit_count != 0) || (!g_Unates.empty())) {
+        while(g_Unit_count != 0) {
 
-            for (int i = 0; i < count_added; ++i) {
-                undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
-                undo_update_solution(solution, units_added_to_solution[i]);
-            }
-            undo_update_clauses_satisfied(clauses, clauses_satisfied, og); //while_units_sat);
+            if (unit_handle_duplicates(clauses, units_added_to_solution) == -1) {
+                // problem .. backtrack .. a * a' = 0
 
-            g_Unit_count = t_val(clauses);
-            --g_rec;
-            return -1;
-        }
-
-        for (int temp = while_unit_count; temp < units_added_to_solution.size(); ++temp) {//(int val : units_added_to_solution) {
-            do_update_solution(solution, units_added_to_solution[temp]); // val instead of u[t]
-            if (do_update_clauses(clauses, units_added_to_solution[temp], uncomp, comp, clauses_satisfied, while_units_sat) == -1) { // val instead of u[t]
                 for (int i = 0; i < count_added; ++i) {
                     undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
                     undo_update_solution(solution, units_added_to_solution[i]);
                 }
-                undo_update_solution(solution, units_added_to_solution[temp]);
-                undo_update_clauses_satisfied(clauses, clauses_satisfied, og);//while_units_sat);
+                undo_update_clauses_satisfied(clauses, clauses_satisfied, og); //while_units_sat);
+
                 g_Unit_count = t_val(clauses);
                 --g_rec;
                 return -1;
             }
+
+            for (int temp = while_unit_count; temp < units_added_to_solution.size(); ++temp) {//(int val : units_added_to_solution) {
+                do_update_solution(solution, units_added_to_solution[temp]); // val instead of u[t]
+                if (do_update_clauses(clauses, units_added_to_solution[temp], uncomp, comp, clauses_satisfied, while_units_sat) == -1) { // val instead of u[t]
+                    for (int i = 0; i < count_added; ++i) {
+                        undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
+                        undo_update_solution(solution, units_added_to_solution[i]);
+                    }
+                    undo_update_solution(solution, units_added_to_solution[temp]);
+                    undo_update_clauses_satisfied(clauses, clauses_satisfied, og);//while_units_sat);
+                    g_Unit_count = t_val(clauses);
+                    --g_rec;
+                    return -1;
+                }
+                og = og + static_cast<int>(g_Unit_count) - static_cast<int>(og_w);
+                og_w = g_Unit_count;
+                ++count_added;
+                ++while_unit_count;
+            }
+        }
+        DLIS_find_unate(solution);
+
+
+        while ((g_Unit_count == 0) && (!g_Unates.empty())) {
+            // same as unit but for unates; break asap when u see there is  a unit that's why == not != for unit count
+            // remove from unate
+            int val = *g_Unates.begin();
+            unates_added_to_solution.push_back(val);
+            g_Unates.erase(val);
+            do_update_solution(solution, val);
+            do_update_clauses(clauses, val, uncomp, comp, clauses_satisfied, while_unates_sat);
             og = og + static_cast<int>(g_Unit_count) - static_cast<int>(og_w);
             og_w = g_Unit_count;
-            ++count_added;
-            ++while_unit_count;
+            g_Unit_count = t_val(clauses);
         }
+
+        DLIS_find_unate(solution);
+        g_Unit_count = t_val(clauses);
     }
 
 
@@ -139,6 +162,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
 
     int og_d = 0;
     unsigned og_d_w = g_Unit_count;
+    g_Unit_count = t_val(clauses);
 
     decision_one:
     // add decision to solution
@@ -211,6 +235,10 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         undo_update_clauses(clauses, i, uncomp, comp);
         undo_update_solution(solution, i);
     }
+    for (const int & i : unates_added_to_solution) {
+        undo_update_clauses(clauses, i, uncomp, comp);
+        undo_update_solution(solution, i);
+    }
     //undo_update_clauses_satisfied(clauses, clauses_satisfied);
     undo_update_clauses_satisfied(clauses, clauses_satisfied, og);
     --g_rec;
@@ -258,14 +286,84 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
      */
 }
 
+void undo_update_DLIS(const int &literal) {
+    if (literal > 0) {
+        ++g_dlis_pos[literal];
+    }
+    else {
+        ++g_dlis_neg[-literal];
+    }
+}
+
+void do_update_DLIS(const int &literal) {
+    if (literal > 0) {
+        --g_dlis_pos[literal];
+    }
+    else {
+        --g_dlis_neg[-literal];
+    }
+}
+
+
+void DLIS_find_unate(const vector<int> &curr_sol) {
+    unordered_set<int> unates;
+    for (int i = 1; i < curr_sol.size(); ++i) {
+        // skip if variable is already assigned
+        if (curr_sol[i] != 0) continue;
+
+        const bool pos_unate = (g_dlis_neg[i] == 0);
+        const bool neg_unate = (g_dlis_pos[i] == 0);
+
+        // 4 possibilites
+        // binate -> skip
+        // both 0 -> skip
+        // pos unate true, negunate false -> insert i
+        // pos unate false, negunate true -> insert -i
+        if (pos_unate != neg_unate) {
+            unates.insert(pos_unate ? i : -i);
+        }
+    }
+    g_Unates = unates;
+}
+
+
+/*
+ *unordered_set<int> DLIS_find_unate(const vector<int> & curr_sol) {
+    unordered_set<int> ret;
+
+    for (int i = 1; i < curr_sol.size(); ++i) {
+        // skip if variable is already assigned
+        if (curr_sol[i] != 0) continue;
+
+        bool pos_unate = (g_dlis_neg[i] == 0);
+        bool neg_unate = (g_dlis_pos[i] == 0);
+
+        // 4 possibilites
+        // binate -> skip
+        // both 0 -> skip
+        // pos unate true, negunate false -> insert i
+        // pos unate false, negunate true -> insert -i
+        if (pos_unate != neg_unate) {
+            ret.insert(pos_unate ? i : -i);
+        }
+    }
+    return ret;
+}
+*/
+
 void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied, const int & val) { //const vector<unsigned> & units_sat) {
     for (const unsigned & i : clauses_satisfied) {
         clauses[i].is_satisfied = false;
+
+        for (int x : clauses[i].lits) {
+            undo_update_DLIS(x);
+        }
         /*if (clauses[i].unassigned == 1) {
             ++g_Unit_count;
         }*/
     }
     g_Unit_count -= val; //units_sat.size();
+    g_Unit_count = t_val(clauses);
     g_Clause_Count += clauses_satisfied.size();
 }
 
@@ -319,6 +417,9 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 }
                 --g_Clause_Count;
                 clauses_satisfied.insert(i);
+                for (int x : clauses[i].lits) {
+                    do_update_DLIS(x);
+                }
             }
         }
     }
@@ -344,6 +445,9 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
                 if (clauses[i].unassigned == 0) {
                     --g_Unit_count;
                     units_satisfied.push_back(i);
+                }
+                for (int x : clauses[i].lits) {
+                    do_update_DLIS(x);
                 }
                 --g_Clause_Count;
                 clauses_satisfied.insert(i);
@@ -447,6 +551,5 @@ int unit_find_variable(vector<int> & units, const int & literal) {
 }
 
 // use goto:
-
 
 
