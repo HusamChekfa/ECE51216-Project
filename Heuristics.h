@@ -7,17 +7,7 @@
 
 #include "Clause.h"
 #include <vector>
-#include <algorithm>
-//#include <set>
 #include <unordered_set>
-//#include <chrono>
-
-// GLOBAL VARIABLES!
-
-extern unsigned g_rec; // global - # of unresolved clauses
-//extern std::chrono::high_resolution_clock::time_point global_start_time;
-//extern std::chrono::high_resolution_clock::time_point global_end_time;
-
 
 /************************************
  *
@@ -30,10 +20,6 @@ extern unsigned g_rec; // global - # of unresolved clauses
 int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat);
 
 // DLIS
-
-int DLIS_choice(const vector<int> & curr_sol);
-
-vector<int> DLIS_order(const vector<int> & curr_sol);
 
 void DLIS_find_unate(const vector<int> & curr_sol);
 
@@ -59,11 +45,11 @@ void undo_update_DLIS(const int & literal);
  *
  ***********************************/
 
-int do_update_clauses(vector<Clause> & clauses, const int & literal, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, unordered_set<unsigned> & clauses_satisfied, vector<unsigned> & units_satisfied);
+int do_update_clauses(vector<Clause> & clauses, const int & literal, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, unordered_set<unsigned> & clauses_satisfied);
 
 void undo_update_clauses(vector<Clause> & clauses, const int & literal, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp);
 
-void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied, const int & val); //const vector<unsigned> & units_sat);
+void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set<unsigned> & clauses_satisfied);
 
 /************************************
  *
@@ -90,8 +76,6 @@ int unit_handle_duplicates(const vector<Clause> & clauses, vector<int> & units);
 int unit_find_false(const vector<int> & literals, const vector<bool> & bools); // was just bools; need literals since literals & bools size = # of vars not # in clause
 
 int unit_find_variable(vector<int> & units, const int & literal);
-
-int unit_update_function(vector<Clause> & clauses, const int & literal);
 
 
 #endif //HEURISTICS_H

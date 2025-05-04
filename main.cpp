@@ -151,7 +151,6 @@ int main() {
 
     for (const string & p : paths) {
         for (int yyy = 0; yyy < 1; ++yyy) {
-            g_rec = 0;
             //global_start_time = std::chrono::high_resolution_clock::now();
             //global_end_time = std::chrono::high_resolution_clock::now();
             size_t numVars = 0;
