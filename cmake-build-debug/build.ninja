@@ -70,13 +70,6 @@ build CMakeFiles/ECE51216_Project.dir/Parser.cpp.obj: CXX_COMPILER__ECE51216_Pro
   OBJECT_DIR = CMakeFiles\ECE51216_Project.dir
   OBJECT_FILE_DIR = CMakeFiles\ECE51216_Project.dir
 
-build CMakeFiles/ECE51216_Project.dir/DPLL.cpp.obj: CXX_COMPILER__ECE51216_Project_unscanned_Debug C$:/Users/Husam$ Study/Documents/GitHub/ECE51216-Project/DPLL.cpp || cmake_object_order_depends_target_ECE51216_Project
-  DEP_FILE = CMakeFiles\ECE51216_Project.dir\DPLL.cpp.obj.d
-  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  INCLUDES = -I"C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/."
-  OBJECT_DIR = CMakeFiles\ECE51216_Project.dir
-  OBJECT_FILE_DIR = CMakeFiles\ECE51216_Project.dir
-
 build CMakeFiles/ECE51216_Project.dir/Heuristics.cpp.obj: CXX_COMPILER__ECE51216_Project_unscanned_Debug C$:/Users/Husam$ Study/Documents/GitHub/ECE51216-Project/Heuristics.cpp || cmake_object_order_depends_target_ECE51216_Project
   DEP_FILE = CMakeFiles\ECE51216_Project.dir\Heuristics.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
@@ -92,7 +85,7 @@ build CMakeFiles/ECE51216_Project.dir/Heuristics.cpp.obj: CXX_COMPILER__ECE51216
 #############################################
 # Link the executable ECE51216_Project.exe
 
-build ECE51216_Project.exe: CXX_EXECUTABLE_LINKER__ECE51216_Project_Debug CMakeFiles/ECE51216_Project.dir/Clause.cpp.obj CMakeFiles/ECE51216_Project.dir/main.cpp.obj CMakeFiles/ECE51216_Project.dir/Parser.cpp.obj CMakeFiles/ECE51216_Project.dir/DPLL.cpp.obj CMakeFiles/ECE51216_Project.dir/Heuristics.cpp.obj
+build ECE51216_Project.exe: CXX_EXECUTABLE_LINKER__ECE51216_Project_Debug CMakeFiles/ECE51216_Project.dir/Clause.cpp.obj CMakeFiles/ECE51216_Project.dir/main.cpp.obj CMakeFiles/ECE51216_Project.dir/Parser.cpp.obj CMakeFiles/ECE51216_Project.dir/Heuristics.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\ECE51216_Project.dir

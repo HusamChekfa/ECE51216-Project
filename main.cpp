@@ -111,10 +111,10 @@ int main() {
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
     // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf150-645/"; // 100 UNSAT
 
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf175-753/"; // 100 SAT
@@ -150,47 +150,37 @@ int main() {
     //paths.push_back("broken.cnf");
 
     for (const string & p : paths) {
-        for (int yyy = 0; yyy < 1; ++yyy) {
-            g_rec = 0;
-            //global_start_time = std::chrono::high_resolution_clock::now();
-            //global_end_time = std::chrono::high_resolution_clock::now();
-            size_t numVars = 0;
-            cout << p << endl;
-            bool satisfied = false;
-            vector<Clause> clauses;
-            //solution.clear();
-            //uncomplemented.clear();
-            //complemented.clear();
-            //fileName = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/ok.cnf";
+        size_t numVars = 0;
+        cout << p << endl;
+        vector<Clause> clauses;
 
-            int a = Parse(p, clauses, numVars);
-            vector<int> solution(numVars + 1, 0);
-            vector<vector<unsigned>> uncomplemented(numVars + 1);
-            vector<vector<unsigned>> complemented(numVars + 1);
-            int c = Parse_uncomp(clauses, uncomplemented, complemented);
-            vector<Clause> to_check = clauses;
-            auto start = std::chrono::high_resolution_clock::now();
-            int b = DPLL(clauses, solution, uncomplemented, complemented, satisfied);
-            auto end = std::chrono::high_resolution_clock::now();
-            if (b == 0) {
-                // Satsified
-                // call clean_solution
-                clean_solution(solution);
-                cout << "\t\tRESULT:SAT" << endl;
-                // run_sat() - this prints output in proper format
-                print_solution(solution);
-                check(to_check, solution);
-                std::chrono::duration<double> elapsed = end - start;
-                cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
-            }
-            else {
-                // Unsatisfied
-                cout << "\t\tRESULT:UNSAT" << endl;
-                ++unsat;
-                std::chrono::duration<double> elapsed = end - start;
-                cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
-                //exit(3);
-            }
+        int a = Parse(p, clauses, numVars);
+        vector<int> solution(numVars + 1, 0);
+        vector<vector<unsigned>> uncomplemented(numVars + 1);
+        vector<vector<unsigned>> complemented(numVars + 1);
+        int c = Parse_uncomp(clauses, uncomplemented, complemented);
+        vector<Clause> to_check = clauses;
+        auto start = std::chrono::high_resolution_clock::now();
+        int b = DPLL(clauses, solution, uncomplemented, complemented);
+        auto end = std::chrono::high_resolution_clock::now();
+        if (b == 0) {
+            // Satsified
+            // call clean_solution
+            clean_solution(solution);
+            cout << "\t\tRESULT:SAT" << endl;
+            // run_sat() - this prints output in proper format
+            print_solution(solution);
+            check(to_check, solution);
+            std::chrono::duration<double> elapsed = end - start;
+            cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
+        }
+        else {
+            // Unsatisfied
+            cout << "\t\tRESULT:UNSAT" << endl;
+            ++unsat;
+            std::chrono::duration<double> elapsed = end - start;
+            cout << "Elapsed time: " << elapsed.count() << " seconds" << endl;
+            //exit(3);
         }
     }
 
