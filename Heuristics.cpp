@@ -3,6 +3,10 @@
 //
 
 #include "Heuristics.h"
+#include <algorithm>
+
+//unsigned CALLS = 0;
+//#define STOP 1048576
 
 unsigned g_rec = 0; // global - # of unresolved clauses
 //std::chrono::high_resolution_clock::time_point global_start_time;
@@ -17,7 +21,19 @@ unsigned g_val(const vector<Clause> & clauses) {
     }
     return ret;
 }
-unsigned t_val(const vector<Clause> & clauses) {
+void /*unsigned*/ t_val(const vector<Clause> & clauses) {
+    unsigned units = 0;
+    unsigned c_count = 0;
+    for (const Clause c : clauses) {
+        if (!c.is_satisfied) {
+            ++c_count;
+            if (c.unassigned == 1) ++units;
+        }
+    }
+    g_Unit_count = units;
+    g_Clause_Count = c_count;
+
+    /*
     unsigned tot = 0;
     for (int x = 0; x < clauses.size(); ++x) {
         if (clauses[x].is_satisfied == false && clauses[x].unassigned == 1) {
@@ -27,6 +43,7 @@ unsigned t_val(const vector<Clause> & clauses) {
     }
 
     return tot;
+    */
 }
 
 bool total(const vector<Clause> & clauses) {
@@ -59,7 +76,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     int og = 0;
     unsigned og_w = g_Unit_count;
     vector<int> unates_added_to_solution;
-
+    t_val(clauses); //g_Unit_count = t_val(clauses);
 
     while ((g_Unit_count != 0) || (!g_Unates.empty())) {
         while(g_Unit_count != 0) {
@@ -71,9 +88,13 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
                     undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
                     undo_update_solution(solution, units_added_to_solution[i]);
                 }
+                for (int i : unates_added_to_solution) {
+                    undo_update_clauses(clauses, i, uncomp, comp);
+                    undo_update_solution(solution, i);
+                }
                 undo_update_clauses_satisfied(clauses, clauses_satisfied, og); //while_units_sat);
 
-                g_Unit_count = t_val(clauses);
+                t_val(clauses); //g_Unit_count = t_val(clauses);
                 --g_rec;
                 return -1;
             }
@@ -85,9 +106,14 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
                         undo_update_clauses(clauses, units_added_to_solution[i], uncomp, comp);
                         undo_update_solution(solution, units_added_to_solution[i]);
                     }
+                    for (int i : unates_added_to_solution) {
+                        undo_update_clauses(clauses, i, uncomp, comp);
+                        undo_update_solution(solution, i);
+                    }
                     undo_update_solution(solution, units_added_to_solution[temp]);
                     undo_update_clauses_satisfied(clauses, clauses_satisfied, og);//while_units_sat);
-                    g_Unit_count = t_val(clauses);
+
+                    t_val(clauses); //g_Unit_count = t_val(clauses);
                     --g_rec;
                     return -1;
                 }
@@ -98,6 +124,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
             }
         }
         DLIS_find_unate(solution);
+        t_val(clauses); //g_Unit_count = t_val(clauses);
 
 
         while ((g_Unit_count == 0) && (!g_Unates.empty())) {
@@ -110,16 +137,17 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
             do_update_clauses(clauses, val, uncomp, comp, clauses_satisfied, while_unates_sat);
             og = og + static_cast<int>(g_Unit_count) - static_cast<int>(og_w);
             og_w = g_Unit_count;
-            g_Unit_count = t_val(clauses);
+            t_val(clauses); //g_Unit_count = t_val(clauses);
         }
 
         DLIS_find_unate(solution);
-        g_Unit_count = t_val(clauses);
+        t_val(clauses); //g_Unit_count = t_val(clauses);
     }
 
 
 
     // check if all clauses are satisfied; if yes -> formula is SAT!
+    t_val(clauses); //g_Unit_count = t_val(clauses);
     if (g_Clause_Count == 0) {
         sat = true;
         if (g_val(clauses) == 0) {
@@ -132,15 +160,101 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         //cout << "line 118 recursive = " << g_rec << endl;
         return 0;
     }
+    /*
+    // changes start here
+    vector<int> order = DLIS_order(solution);
+    if (order.empty()) { // should never happen
+        exit(5);
+    }
+    unordered_set<unsigned> clauses_satisfied_dpll;
+    vector<unsigned> dpll_units_sat;
+    int og_d = 0;
+    unsigned og_d_w = g_Unit_count;
+    t_val(clauses); //g_Unit_count = t_val(clauses);
+
+    // iterate thru order
+    for (int choice : order) {
+        //++CALLS;
+        //cout << CALLS << " " << double(CALLS)/STOP << endl;
+        //if (CALLS == STOP) cout << "CALLS == STOP" << endl;
+        // if (g_rec == 5) {
+        //     cout << g_rec << endl;
+        // }
+        //cout << "rec stack # " << g_rec << " . literal choice: " << choice << endl;
+        do_update_solution(solution, choice);
+        if (do_update_clauses(clauses, choice, uncomp, comp, clauses_satisfied_dpll, dpll_units_sat) == -1) {
+            undo_update_solution(solution, choice);
+            continue;
+        }
+        og_d = og_d + static_cast<int>(g_Unit_count) - static_cast<int>(og_d_w);
+
+        if (DPLL(clauses, solution, uncomp, comp, sat) == 0) {
+            --g_rec;
+            return 0;
+        }
+        undo_update_clauses(clauses, choice, uncomp, comp);
+        undo_update_clauses_satisfied(clauses, clauses_satisfied_dpll, og_d);// dpll_units_sat);
+        clauses_satisfied_dpll.clear();
+        dpll_units_sat.clear();
+        undo_update_solution(solution, choice);
+        t_val(clauses); //g_Unit_count = t_val(clauses);
+
+        og_d = 0;
+        og_d_w = g_Unit_count;
+    }
+    for (const int & i : units_added_to_solution) {
+        undo_update_clauses(clauses, i, uncomp, comp);
+        undo_update_solution(solution, i);
+    }
+    for (const int & i : unates_added_to_solution) {
+        undo_update_clauses(clauses, i, uncomp, comp);
+        undo_update_solution(solution, i);
+    }
+    //undo_update_clauses_satisfied(clauses, clauses_satisfied);
+    undo_update_clauses_satisfied(clauses, clauses_satisfied, og);
+    --g_rec;
+    if (g_rec == 239) {
+        //cout << "hi";
+    }
+    //cout << "CCCrecursive = " << g_rec << endl;
+    t_val(clauses); //g_Unit_count = t_val(clauses);
+
+
+
+
+
+    return -1;
+    // changes end here
+    */
+
+
+
+
+
     unordered_set<unsigned> clauses_satisfied_dpll;
     //unordered_set<unsigned> union_clauses;
     int literalChoice = 0;
     // make branch decision
-    for (int i = 1; i < solution.size(); ++i) { // i starts at 1 since our vectors are size #vars + 1 for ease of reading, vec[0] is unused
+    /*
+     for (int i = 1; i < solution.size(); ++i) { // i starts at 1 since our vectors are size #vars + 1 for ease of reading, vec[0] is unused
         if (solution[i] == 0) {
             literalChoice = i;
             break;
         }
+    }
+    */
+
+
+    int max_sum = 0;
+    for (int i = 1; i < solution.size(); ++i) {
+        if (solution[i] != 0) continue;
+
+        unsigned curr_sum = g_dlis_pos[i] + g_dlis_neg[i];
+        if (curr_sum > max_sum) {
+            max_sum = curr_sum;
+            literalChoice = i;
+        }
+
     }
 
     if (literalChoice == 0) {
@@ -162,7 +276,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
 
     int og_d = 0;
     unsigned og_d_w = g_Unit_count;
-    g_Unit_count = t_val(clauses);
+    t_val(clauses);// g_Unit_count = t_val(clauses);
 
     decision_one:
     // add decision to solution
@@ -190,7 +304,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     dpll_units_sat.clear();
     undo_update_solution(solution, literalChoice);
 
-    g_Unit_count = t_val(clauses);
+    t_val(clauses);//g_Unit_count = t_val(clauses);
 
     og_d = 0;
     og_d_w = g_Unit_count;
@@ -246,9 +360,11 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         //cout << "hi";
     }
     //cout << "CCCrecursive = " << g_rec << endl;
-    g_Unit_count = t_val(clauses);
+    t_val(clauses); //g_Unit_count = t_val(clauses);
 
     return -1;
+
+
     /*
     // if (do_update_clauses(clauses, literalChoice, uncomp, comp, clauses_satisfied_dpll) == -1) {
     //     for (int i = 0; i < count_added; ++i) {
@@ -284,6 +400,34 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
      *  remove deicison from solution
      *  return -1; // backtrack.
      */
+}
+
+int DLIS_choice(const vector<int> & curr_sol) {
+
+
+
+
+    return 0;
+}
+
+vector<int> DLIS_order(const vector<int> & curr_sol) {
+    vector<int> ret;
+
+    vector<pair<int, int>> temp;
+    for (int i = 1; i < curr_sol.size(); ++i) {
+        if (curr_sol[i] != 0) continue;
+
+        if (g_dlis_pos[i] > 0) temp.emplace_back(g_dlis_pos[i], i);
+        if (g_dlis_neg[i] > 0) temp.emplace_back(g_dlis_neg[i], -i);
+    }
+
+    sort(temp.rbegin(), temp.rend());
+
+    for (const auto & [val, ind] : temp) {
+        ret.push_back(ind);
+    }
+
+    return ret;
 }
 
 void undo_update_DLIS(const int &literal) {
@@ -363,8 +507,9 @@ void undo_update_clauses_satisfied(vector<Clause> & clauses, const unordered_set
         }*/
     }
     g_Unit_count -= val; //units_sat.size();
-    g_Unit_count = t_val(clauses);
+    //t_val(clauses); //g_Unit_count = t_val(clauses);
     g_Clause_Count += clauses_satisfied.size();
+    t_val(clauses); //g_Unit_count = t_val(clauses);
 }
 
 void undo_update_clauses(vector<Clause> & clauses, const int & literal, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp) {
@@ -455,6 +600,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
         }
 
     }
+    t_val(clauses); //g_Unit_count = t_val(clauses);
 
     return 0;
 
@@ -483,7 +629,7 @@ int do_update_clauses(vector<Clause> & clauses, const int & literal, const vecto
             -- count;
         }
     }
-
+    t_val(clauses); //g_Unit_count = t_val(clauses);
     return -1;
 }
 

@@ -102,7 +102,7 @@ int main() {
 
     path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf20-91/"; // 1000 SAT
 
-   // path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf50-218/"; // 1000 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf50-218/"; // 1000 SAT
    // path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf50-218/"; // 1000 UNSAT
 
    // path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf75-325/"; // 100 SAT
@@ -111,10 +111,10 @@ int main() {
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
     // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
 
-    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
 
-    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
+    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf150-645/"; // 100 UNSAT
 
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf175-753/"; // 100 SAT
@@ -135,6 +135,7 @@ int main() {
 
     vector<string> paths;
     //paths.push_back(path);
+    //paths.push_back("C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/uf125-054.cnf");
     for (const auto& entry : filesystem::directory_iterator(path)) {
         paths.push_back(path + entry.path().filename().string());
     }
@@ -149,7 +150,7 @@ int main() {
     //paths.push_back("broken.cnf");
 
     for (const string & p : paths) {
-        for (int yyy = 0; yyy < 4; ++yyy) {
+        for (int yyy = 0; yyy < 1; ++yyy) {
             g_rec = 0;
             //global_start_time = std::chrono::high_resolution_clock::now();
             //global_end_time = std::chrono::high_resolution_clock::now();
