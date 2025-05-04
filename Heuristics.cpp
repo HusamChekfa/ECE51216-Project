@@ -4,6 +4,7 @@
 
 #include "Heuristics.h"
 #include <algorithm>
+#include <ranges>
 
 void t_val(const vector<Clause> & clauses) {
     unsigned units = 0;
@@ -378,7 +379,7 @@ int unit_find_false(const vector<int> & literals, const vector<bool> & bools) {
 int unit_find_variable(vector<int> & units, const int & literal) {
     // first check if opposite is found
     // if so, return -1; unsat (a * a' = 0)
-    auto it = ranges::find(units, -literal);
+    auto it = std::ranges::find(units, -literal);
     if (it != units.end()) {
         return -1;
     }
@@ -386,7 +387,7 @@ int unit_find_variable(vector<int> & units, const int & literal) {
     // check if same literal is found
     // if so, only return 1
     // if not, add literal to units then return 0
-    it = ranges::find(units, literal);
+    it = std::ranges::find(units, literal);
     if (it != units.end()) {
         return 1;
     }
