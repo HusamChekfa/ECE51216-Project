@@ -18,7 +18,7 @@ void t_val(const vector<Clause> & clauses) {
     g_Clause_Count = c_count;
 }
 
-int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp, bool & sat) {
+int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<unsigned>> & uncomp, const vector<vector<unsigned>> & comp) {
     vector<int> units_added_to_solution;
     unordered_set<unsigned> clauses_satisfied; // allow easier undo
 
@@ -121,7 +121,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
     }
 
     // call DPLL
-    if (DPLL(clauses, solution, uncomp, comp, sat) == 0) {
+    if (DPLL(clauses, solution, uncomp, comp) == 0) {
         return 0;
     }
 
@@ -144,7 +144,7 @@ int DPLL(vector<Clause> & clauses, vector<int> & solution, const vector<vector<u
         goto both_fail;
     }
 
-    if (DPLL(clauses, solution, uncomp, comp, sat) == 0) {
+    if (DPLL(clauses, solution, uncomp, comp) == 0) {
         return 0;
     }
 

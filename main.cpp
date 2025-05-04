@@ -111,10 +111,10 @@ int main() {
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf100-430/"; // 1000 SAT
     // works //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf100-430/"; // 1000 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf125-538/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf125-538/"; // 100 UNSAT
 
-    path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
+    //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf150-645/"; // 100 SAT
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uuf150-645/"; // 100 UNSAT
 
     //path = "C:/Users/Husam Study/Documents/GitHub/ECE51216-Project/SAT/uf175-753/"; // 100 SAT
@@ -155,7 +155,6 @@ int main() {
             //global_end_time = std::chrono::high_resolution_clock::now();
             size_t numVars = 0;
             cout << p << endl;
-            bool satisfied = false;
             vector<Clause> clauses;
             //solution.clear();
             //uncomplemented.clear();
@@ -169,7 +168,7 @@ int main() {
             int c = Parse_uncomp(clauses, uncomplemented, complemented);
             vector<Clause> to_check = clauses;
             auto start = std::chrono::high_resolution_clock::now();
-            int b = DPLL(clauses, solution, uncomplemented, complemented, satisfied);
+            int b = DPLL(clauses, solution, uncomplemented, complemented);
             auto end = std::chrono::high_resolution_clock::now();
             if (b == 0) {
                 // Satsified
