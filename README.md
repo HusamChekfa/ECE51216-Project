@@ -1,6 +1,6 @@
-# ECE51216-Project
+# ECE51216-Project - a custom Boolean Satisfiability Solver
 
-C++ 20
+Language: C++ 20
 ______________________________
 i. Directory Structure
 
