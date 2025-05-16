@@ -1,6 +1,8 @@
 # ECE51216-Project - a custom Boolean Satisfiability Solver
 
 Language: C++ 20
+Main Algorithm: DPLL
+Heuristics: CHAFF BCP (unit clause propogation), DLIS, Unate variable branching
 ______________________________
 i. Directory Structure
 
